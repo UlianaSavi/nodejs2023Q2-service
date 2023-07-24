@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class AppService {
+export class FavoritesService {
   init(): string {
-    return 'Hello World! 123';
+    return 'This is Favorites servise :)';
   }
 }
