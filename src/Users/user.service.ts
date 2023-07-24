@@ -109,6 +109,27 @@ export class UserService {
   }
 
   deleteUser(id: string) {
-    this.users.filter((userInDb) => userInDb.id !== id);
+    let message: string | null = null;
+    const isValid = validate(id);
+
+    const candidate = this.users.find((user) => user.id === id);
+
+    if (!isValid) {
+      message = 'Invalid Id! (Not UUID type.)';
+      this.status = 400;
+    }
+    if (!candidate) {
+      message = `User with id ${id} not found!`;
+      this.status = 404;
+    }
+    if (isValid && candidate) {
+      this.users.filter((userInDb) => userInDb.id !== id);
+      this.status = 204;
+    }
+    const result: IResponse = {
+      data: message ? message : this.users,
+      statusCode: this.status,
+    };
+    return result;
   }
 }
