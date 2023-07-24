@@ -1,12 +1,12 @@
 import { Controller, Get } from '@nestjs/common';
 import { TrackService } from './track.service';
 
-@Controller()
+@Controller('track')
 export class TrackController {
   constructor(private readonly trackService: TrackService) {}
 
-  @Get()
-  init(): string {
-    return this.trackService.init();
-  }
+  // @Get()
+  // init(): string {
+  //   return this.trackService.init();
+  // }
 }
