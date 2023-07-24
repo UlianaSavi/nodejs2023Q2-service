@@ -6,6 +6,7 @@ import { IResponse } from 'src/models/response.model';
 @Injectable()
 export class UserService {
   users: IUser[] = [];
+  status: number | null = null;
 
   getAll() {
     const result: IResponse = { data: this.users, statusCode: 200 };
@@ -13,7 +14,6 @@ export class UserService {
   }
 
   getById(id: string) {
-    let status = 0;
     let candidate: IUser | null = null;
     let message: string | null = null;
     const isValid = validate(id);
@@ -21,23 +21,22 @@ export class UserService {
     candidate = this.users.find((userInDb) => userInDb.id === id);
 
     if (isValid && candidate) {
-      status = 200;
+      this.status = 200;
     }
     if (isValid && !candidate) {
       candidate = null;
-      status = 404;
+      this.status = 404;
       message = `User with id ${id} - not found!`;
     }
 
     const result: IResponse = {
       data: message ? message : candidate,
-      statusCode: status,
+      statusCode: this.status,
     };
     return result;
   }
 
   createUser(dto: CreateUserDto) {
-    let status = 0;
     let message: string | null = null;
     let newUser: IUser | null = null;
 
@@ -51,29 +50,62 @@ export class UserService {
         updatedAt: 0,
       };
 
-      status = 200;
+      this.status = 200;
 
       this.users.push(newUser);
     } else {
-      message = '';
-      status = 400;
+      message = 'Incorrect data for operation!';
+      this.status = 400;
     }
     const result: IResponse = {
       data: message ? message : newUser,
-      statusCode: status,
+      statusCode: this.status,
     };
     return result;
   }
 
-  updateUserPassword(dto: UpdatePasswordDto) {
-    if (dto.newPassword && dto.oldPassword) {
-      const updatedUserIdx = this.users.findIndex(
-        (userInDb) => userInDb.password === dto.oldPassword,
-      );
-      this.users.at(updatedUserIdx).password = dto.newPassword;
-      return this.users.at(updatedUserIdx);
+  updateUserPassword(id: string, dto: UpdatePasswordDto) {
+    let message: string | null = null;
+    let updatedUser: IUser | null = null;
+    const isValid = validate(id);
+
+    const userToUpdateIdx = this.users.findIndex(
+      (userInDb) => userInDb.id === id,
+    );
+    const isValidOldPassword =
+      this.users.at(userToUpdateIdx)?.password === dto?.oldPassword;
+
+    if (!this.users.at(userToUpdateIdx)) {
+      message = `User with id ${id} not found!`;
+      this.status = 404;
     }
-    return null;
+    if (!isValid) {
+      message = 'Invalid Id! (Not UUID type.)';
+      this.status = 400;
+    }
+
+    if (!isValidOldPassword) {
+      message = 'Wrong old password!';
+      this.status = 403;
+    }
+
+    if (
+      dto.newPassword &&
+      dto.oldPassword &&
+      isValid &&
+      isValidOldPassword &&
+      this.users.at(userToUpdateIdx)
+    ) {
+      this.users.at(userToUpdateIdx).password = dto.newPassword;
+      updatedUser = this.users.at(userToUpdateIdx);
+      this.status = 200;
+    }
+
+    const result: IResponse = {
+      data: message ? message : updatedUser,
+      statusCode: this.status,
+    };
+    return result;
   }
 
   deleteUser(id: string) {
