@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { METHODS } from 'src/constants';
 import { CreateUserDto, IUser, UpdatePasswordDto } from './user.model';
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4, validate } from 'uuid';
 import { IResponse } from 'src/models/response.model';
 
 @Injectable()
@@ -14,8 +14,27 @@ export class UserService {
   }
 
   getById(id: string) {
-    const candidate = this.users.find((userInDb) => userInDb.id === id);
-    return candidate;
+    let status = 0;
+    let candidate: IUser | null = null;
+    let message: string | null = null;
+    const isValid = validate(id);
+
+    candidate = this.users.find((userInDb) => userInDb.id === id);
+
+    if (isValid && candidate) {
+      status = 200;
+    }
+    if (isValid && !candidate) {
+      candidate = null;
+      status = 404;
+      message = `User with id ${id} - not found!`;
+    }
+
+    const result: IResponse = {
+      data: message ? message : candidate,
+      statusCode: status,
+    };
+    return result;
   }
 
   createUser(dto: CreateUserDto) {
