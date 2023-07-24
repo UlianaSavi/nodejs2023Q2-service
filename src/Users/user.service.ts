@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { METHODS } from 'src/constants';
 import { CreateUserDto, IUser, UpdatePasswordDto } from './user.model';
 import { v4 as uuidv4, validate } from 'uuid';
 import { IResponse } from 'src/models/response.model';
@@ -38,8 +37,12 @@ export class UserService {
   }
 
   createUser(dto: CreateUserDto) {
+    let status = 0;
+    let message: string | null = null;
+    let newUser: IUser | null = null;
+
     if (dto.login && dto.password) {
-      const newUser: IUser = {
+      newUser = {
         id: uuidv4(),
         login: dto.login,
         password: dto.password,
@@ -47,10 +50,19 @@ export class UserService {
         createdAt: new Date().getTime(),
         updatedAt: 0,
       };
+
+      status = 200;
+
       this.users.push(newUser);
-      return newUser;
+    } else {
+      message = '';
+      status = 400;
     }
-    return null;
+    const result: IResponse = {
+      data: message ? message : newUser,
+      statusCode: status,
+    };
+    return result;
   }
 
   updateUserPassword(dto: UpdatePasswordDto) {
@@ -66,25 +78,5 @@ export class UserService {
 
   deleteUser(id: string) {
     this.users.filter((userInDb) => userInDb.id !== id);
-  }
-
-  init(
-    method: string,
-    id: string | null = null,
-    body: IUser | null = null,
-  ): IResponse | null {
-    if (method === METHODS.GET && !id) {
-      return this.getAll();
-    }
-    if (method === METHODS.GET && id) {
-      this.getById(id);
-    }
-    if (method === METHODS.POST && body) {
-      this.createUser(body);
-    }
-    if (method === METHODS.DELETE && id) {
-      this.deleteUser(id);
-    }
-    return null;
   }
 }
