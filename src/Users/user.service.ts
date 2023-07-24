@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { METHODS } from 'src/constants';
 import { CreateUserDto, IUser, UpdatePasswordDto } from './user.model';
 import { v4 as uuidv4 } from 'uuid';
-import { Response } from 'express';
 import { IResponse } from 'src/models/response.model';
 
 @Injectable()
