@@ -2,7 +2,7 @@ import { Controller, Get, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { AppService } from './app.service';
 import { UserService } from './Users/user.service';
-import { COMMANDS } from './constants';
+import { ROUTES } from './constants';
 import { TrackService } from './Tracks/track.service';
 
 @Controller()
@@ -20,7 +20,7 @@ export class AppController {
     const id = params.id || '';
 
     switch (command) {
-      case COMMANDS.USER:
+      case ROUTES.USER:
         const userRes = this.userService.init(method, id, body);
         const userResDataAsJson = JSON.stringify(userRes.data);
         res.status(userRes.statusCode);

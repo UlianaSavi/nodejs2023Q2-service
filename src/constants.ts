@@ -1,6 +1,6 @@
 export const SERVER_PORT = 4000;
 
-export enum COMMANDS {
+export enum ROUTES {
   USER = '/user',
   TRACK = '/track',
   ARTIST = '/artist',
