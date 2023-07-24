@@ -1,5 +1,5 @@
-import { Controller, Get, Req } from '@nestjs/common';
-import { Request } from 'express';
+import { Controller, Get, Req, Res } from '@nestjs/common';
+import { Request, Response } from 'express';
 import { AppService } from './app.service';
 import { UserService } from './Users/user.service';
 import { COMMANDS } from './constants';
@@ -14,13 +14,17 @@ export class AppController {
   ) {}
 
   @Get()
-  getCommand(@Req() request: Request): string {
-    const command = request.url || '';
-    const method = request.method || '';
+  router(@Req() req: Request, @Res() res: Response): string {
+    const { method, body, path, params } = req;
+    const command = path || '';
+    const id = params.id || '';
+
     switch (command) {
       case COMMANDS.USER:
-        this.userService.init(method);
-        break;
+        const userRes = this.userService.init(method, id, body);
+        const userResDataAsJson = JSON.stringify(userRes.data);
+        res.status(userRes.statusCode);
+        res.send(userResDataAsJson);
       default:
         console.log('Unknown command!');
         break;
