@@ -1,7 +1,7 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { ArtistService } from './artist.service';
 
-@Controller('artist')
+@Controller('api/artist')
 export class ArtistController {
   constructor(private readonly artistService: ArtistService) {}
 
