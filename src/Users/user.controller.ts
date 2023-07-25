@@ -8,13 +8,9 @@ export class UserController {
 
   @Get()
   getAll(@Res() res: Response) {
-    console.log(2);
     const userRes = this.userService.getAll();
-    const userResDataAsJson = JSON.stringify(userRes.data);
-
     res.status(userRes.statusCode);
-    res.send(userResDataAsJson);
-    return userResDataAsJson;
+    res.send(userRes.data);
   }
 
   @Get('/:id')
@@ -23,11 +19,9 @@ export class UserController {
     const id = params.id;
 
     const userRes = this.userService.getById(id);
-    const userResDataAsJson = JSON.stringify(userRes.data);
 
     res.status(userRes.statusCode);
-    res.send(userResDataAsJson);
-    return userResDataAsJson;
+    res.send(userRes.data);
   }
 
   @Post()
@@ -35,11 +29,9 @@ export class UserController {
     const { body } = req;
 
     const userRes = this.userService.createUser(body);
-    const userResDataAsJson = JSON.stringify(userRes.data);
 
     res.status(userRes.statusCode);
-    res.send(userResDataAsJson);
-    return userResDataAsJson;
+    res.send(userRes.data);
   }
 
   @Put('/:id')
@@ -48,10 +40,8 @@ export class UserController {
     const id = params.id;
 
     const userRes = this.userService.updateUserPassword(id, body);
-    const userResDataAsJson = JSON.stringify(userRes.data);
     res.status(userRes.statusCode);
-    res.send(userResDataAsJson);
-    return userResDataAsJson;
+    res.send(userRes.data);
   }
 
   @Delete('/:id')
@@ -60,9 +50,7 @@ export class UserController {
     const id = params.id;
 
     const userRes = this.userService.deleteUser(id);
-    const userResDataAsJson = JSON.stringify(userRes.data);
     res.status(userRes.statusCode);
-    res.send(userResDataAsJson);
-    return userResDataAsJson;
+    res.send(userRes.data);
   }
 }

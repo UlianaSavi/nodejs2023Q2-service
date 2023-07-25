@@ -54,7 +54,7 @@ export class UserService {
         updatedAt: new Date().getTime(),
       };
 
-      this.status = 200;
+      this.status = 201;
 
       this.users.push(newUser);
     } else {
