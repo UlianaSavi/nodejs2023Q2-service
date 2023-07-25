@@ -2,21 +2,23 @@ import { Controller, Get, Post, Put, Delete, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { UserService } from './user.service';
 
-@Controller('api/users')
+@Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
-  getAllUsers(@Res() res: Response) {
+  getAll(@Res() res: Response) {
+    console.log(2);
     const userRes = this.userService.getAll();
     const userResDataAsJson = JSON.stringify(userRes.data);
 
     res.status(userRes.statusCode);
     res.send(userResDataAsJson);
+    return userResDataAsJson;
   }
 
   @Get('/:id')
-  getUserbyId(@Req() req: Request, @Res() res: Response) {
+  getById(@Req() req: Request, @Res() res: Response) {
     const { params } = req;
     const id = params.id;
 
@@ -25,10 +27,11 @@ export class UserController {
 
     res.status(userRes.statusCode);
     res.send(userResDataAsJson);
+    return userResDataAsJson;
   }
 
   @Post()
-  createNewUser(@Req() req: Request, @Res() res: Response) {
+  create(@Req() req: Request, @Res() res: Response) {
     const { body } = req;
 
     const userRes = this.userService.createUser(body);
@@ -36,10 +39,11 @@ export class UserController {
 
     res.status(userRes.statusCode);
     res.send(userResDataAsJson);
+    return userResDataAsJson;
   }
 
   @Put('/:id')
-  updatePass(@Req() req: Request, @Res() res: Response) {
+  update(@Req() req: Request, @Res() res: Response) {
     const { body, params } = req;
     const id = params.id;
 
@@ -47,10 +51,11 @@ export class UserController {
     const userResDataAsJson = JSON.stringify(userRes.data);
     res.status(userRes.statusCode);
     res.send(userResDataAsJson);
+    return userResDataAsJson;
   }
 
   @Delete('/:id')
-  deleteUser(@Req() req: Request, @Res() res: Response) {
+  delete(@Req() req: Request, @Res() res: Response) {
     const { params } = req;
     const id = params.id;
 
@@ -58,5 +63,6 @@ export class UserController {
     const userResDataAsJson = JSON.stringify(userRes.data);
     res.status(userRes.statusCode);
     res.send(userResDataAsJson);
+    return userResDataAsJson;
   }
 }

@@ -17,7 +17,6 @@ export class UserService {
     let candidate: IUser | null = null;
     let message: string | null = null;
     const isValid = validate(id);
-    console.log(isValid);
 
     candidate = this.users.find((userInDb) => userInDb.id === id);
 
