@@ -17,9 +17,14 @@ export class UserService {
     let candidate: IUser | null = null;
     let message: string | null = null;
     const isValid = validate(id);
+    console.log(isValid);
 
     candidate = this.users.find((userInDb) => userInDb.id === id);
 
+    if (!isValid) {
+      this.status = 400;
+      message = 'Invalid Id! (Not UUID type.)';
+    }
     if (isValid && candidate) {
       this.status = 200;
     }
@@ -43,11 +48,11 @@ export class UserService {
     if (dto.login && dto.password) {
       newUser = {
         id: uuidv4(),
-        login: dto.login,
-        password: dto.password,
+        login: `${dto.login}`,
+        password: `${dto.password}`,
         version: 0,
         createdAt: new Date().getTime(),
-        updatedAt: 0,
+        updatedAt: new Date().getTime(),
       };
 
       this.status = 200;
@@ -84,7 +89,7 @@ export class UserService {
       this.status = 400;
     }
 
-    if (!isValidOldPassword) {
+    if (isValid && this.users.at(userToUpdateIdx) && !isValidOldPassword) {
       message = 'Wrong old password!';
       this.status = 403;
     }
@@ -118,12 +123,13 @@ export class UserService {
       message = 'Invalid Id! (Not UUID type.)';
       this.status = 400;
     }
-    if (!candidate) {
+    if (isValid && !candidate) {
       message = `User with id ${id} not found!`;
       this.status = 404;
     }
     if (isValid && candidate) {
-      this.users.filter((userInDb) => userInDb.id !== id);
+      const res = this.users.filter((userInDb) => userInDb.id !== id);
+      this.users = res;
       this.status = 204;
     }
     const result: IResponse = {
