@@ -1,7 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto, IUser, UpdatePasswordDto } from './user.model';
+import {
+  CreateUserDto,
+  INewUserPesponse,
+  IUser,
+  UpdatePasswordDto,
+} from './user.model';
 import { v4 as uuidv4, validate } from 'uuid';
 import { IResponse } from 'src/models/response.model';
+import { StatusCodes } from 'http-status-codes';
 
 @Injectable()
 export class UserService {
@@ -9,7 +15,7 @@ export class UserService {
   status: number | null = null;
 
   getAll() {
-    const result: IResponse = { data: this.users, statusCode: 200 };
+    const result: IResponse = { data: this.users, statusCode: StatusCodes.OK };
     return result;
   }
 
@@ -21,15 +27,15 @@ export class UserService {
     candidate = this.users.find((userInDb) => userInDb.id === id);
 
     if (!isValid) {
-      this.status = 400;
+      this.status = StatusCodes.BAD_REQUEST;
       message = 'Invalid Id! (Not UUID type.)';
     }
     if (isValid && candidate) {
-      this.status = 200;
+      this.status = StatusCodes.OK;
     }
     if (isValid && !candidate) {
       candidate = null;
-      this.status = 404;
+      this.status = StatusCodes.NOT_FOUND;
       message = `User with id ${id} - not found!`;
     }
 
@@ -43,26 +49,37 @@ export class UserService {
   createUser(dto: CreateUserDto) {
     let message: string | null = null;
     let newUser: IUser | null = null;
+    let userWithoutPassword: INewUserPesponse | null = null;
 
     if (dto.login && dto.password) {
       newUser = {
         id: uuidv4(),
         login: `${dto.login}`,
         password: `${dto.password}`,
-        version: 0,
+        version: 1,
         createdAt: new Date().getTime(),
         updatedAt: new Date().getTime(),
       };
 
-      this.status = 201;
+      this.status = StatusCodes.CREATED;
 
       this.users.push(newUser);
     } else {
       message = 'Incorrect data for operation!';
-      this.status = 400;
+      this.status = StatusCodes.BAD_REQUEST;
+    }
+
+    if (!message && newUser) {
+      userWithoutPassword = {
+        id: newUser.id,
+        login: newUser.login,
+        version: newUser.version,
+        createdAt: newUser.createdAt,
+        updatedAt: newUser.updatedAt,
+      };
     }
     const result: IResponse = {
-      data: message ? message : newUser,
+      data: message ? message : userWithoutPassword,
       statusCode: this.status,
     };
     return result;
@@ -70,7 +87,7 @@ export class UserService {
 
   updateUserPassword(id: string, dto: UpdatePasswordDto) {
     let message: string | null = null;
-    let updatedUser: IUser | null = null;
+    let userWithoutPassword: INewUserPesponse | null = null;
     const isValid = validate(id);
 
     const userToUpdateIdx = this.users.findIndex(
@@ -81,18 +98,20 @@ export class UserService {
 
     if (!this.users.at(userToUpdateIdx)) {
       message = `User with id ${id} not found!`;
-      this.status = 404;
+      this.status = StatusCodes.NOT_FOUND;
+    }
+    if (!dto?.newPassword || !dto?.oldPassword) {
+      message = 'Invalid DTO!';
+      this.status = StatusCodes.BAD_REQUEST;
     }
     if (!isValid) {
       message = 'Invalid Id! (Not UUID type.)';
-      this.status = 400;
+      this.status = StatusCodes.BAD_REQUEST;
     }
-
     if (isValid && this.users.at(userToUpdateIdx) && !isValidOldPassword) {
       message = 'Wrong old password!';
-      this.status = 403;
+      this.status = StatusCodes.FORBIDDEN;
     }
-
     if (
       dto.newPassword &&
       dto.oldPassword &&
@@ -101,12 +120,22 @@ export class UserService {
       this.users.at(userToUpdateIdx)
     ) {
       this.users.at(userToUpdateIdx).password = dto.newPassword;
-      updatedUser = this.users.at(userToUpdateIdx);
-      this.status = 200;
+      this.users.at(userToUpdateIdx).version =
+        this.users.at(userToUpdateIdx).version + 1;
+      this.users.at(userToUpdateIdx).updatedAt = new Date().getTime();
+      userWithoutPassword = {
+        id: this.users.at(userToUpdateIdx).id,
+        login: this.users.at(userToUpdateIdx).login,
+        version: this.users.at(userToUpdateIdx).version,
+        createdAt: this.users.at(userToUpdateIdx).createdAt,
+        updatedAt: this.users.at(userToUpdateIdx).updatedAt,
+      };
+
+      this.status = StatusCodes.OK;
     }
 
     const result: IResponse = {
-      data: message ? message : updatedUser,
+      data: message ? message : userWithoutPassword,
       statusCode: this.status,
     };
     return result;
@@ -120,16 +149,16 @@ export class UserService {
 
     if (!isValid) {
       message = 'Invalid Id! (Not UUID type.)';
-      this.status = 400;
+      this.status = StatusCodes.BAD_REQUEST;
     }
     if (isValid && !candidate) {
       message = `User with id ${id} not found!`;
-      this.status = 404;
+      this.status = StatusCodes.NOT_FOUND;
     }
     if (isValid && candidate) {
       const res = this.users.filter((userInDb) => userInDb.id !== id);
       this.users = res;
-      this.status = 204;
+      this.status = StatusCodes.NO_CONTENT;
     }
     const result: IResponse = {
       data: message ? message : this.users,

@@ -6,6 +6,13 @@ export interface IUser {
   createdAt: number;
   updatedAt: number;
 }
+export interface INewUserPesponse {
+  id: string;
+  login: string;
+  version: number;
+  createdAt: number;
+  updatedAt: number;
+}
 
 export interface CreateUserDto {
   login: string;

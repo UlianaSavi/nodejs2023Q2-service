@@ -1,6 +1,6 @@
-import { IUser } from '../Users/user.model';
+import { INewUserPesponse, IUser } from '../Users/user.model';
 
 export interface IResponse {
-  data: IUser[] | IUser | string;
+  data: IUser[] | IUser | INewUserPesponse | string;
   statusCode: number;
 }
