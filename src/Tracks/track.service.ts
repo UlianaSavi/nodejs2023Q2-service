@@ -131,4 +131,15 @@ export class TrackService {
     };
     return result;
   }
+
+  // set track.artistId && track.albumId to null after deletion album or artist
+  updateAfterDeletion(id: string) {
+    const candidateIdx = this.tracks.findIndex(
+      (track) => track.artistId === id,
+    );
+    if (this.tracks.at(candidateIdx)) {
+      this.tracks.at(candidateIdx).artistId = null;
+      this.tracks.at(candidateIdx).albumId = null;
+    }
+  }
 }
