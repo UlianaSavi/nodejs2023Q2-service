@@ -10,25 +10,18 @@ import { ITrack } from 'src/Tracks/track.model';
 
 @Controller('favs')
 export class FavoritesController {
-  artistsArr: IArtist[] | null = null;
-  albumsArr: IAlbum[] | null = null;
-  trackArr: ITrack[] | null = null;
   constructor(
     private readonly favoritesService: FavoritesService,
     private readonly artistService: ArtistService,
     private readonly albumService: AlbumService,
     private readonly trackService: TrackService,
-  ) {
-    this.artistsArr = this.artistService.artists;
-    this.albumsArr = this.albumService.albums;
-    this.trackArr = this.trackService.tracks;
-  }
+  ) {}
 
   @Get()
   getAll(@Res() res: Response) {
-    const trackRes = this.favoritesService.getAll();
-    res.status(trackRes.statusCode);
-    res.send(trackRes.data);
+    const result = this.favoritesService.getAll();
+    res.status(result.statusCode);
+    res.send(result.data);
   }
 
   @Post('artist/:id')
@@ -38,7 +31,7 @@ export class FavoritesController {
 
     const result = this.favoritesService.addArtistToFavs(
       newFavsId,
-      this.artistsArr,
+      this.artistService.getAll().data as IArtist[],
     );
 
     res.status(result.statusCode);
@@ -52,7 +45,7 @@ export class FavoritesController {
 
     const result = this.favoritesService.addALbumToFavs(
       newFavsId,
-      this.albumsArr,
+      this.albumService.getAll().data as IAlbum[],
     );
 
     res.status(result.statusCode);
@@ -66,7 +59,7 @@ export class FavoritesController {
 
     const result = this.favoritesService.addTrackToFavs(
       newFavsId,
-      this.trackArr,
+      this.trackService.getAll().data as ITrack[],
     );
 
     res.status(result.statusCode);
@@ -78,10 +71,7 @@ export class FavoritesController {
     const { params } = req;
     const newFavsId = params.id;
 
-    const result = this.favoritesService.deleteArtistFromFavs(
-      newFavsId,
-      this.artistsArr,
-    );
+    const result = this.favoritesService.deleteArtistFromFavs(newFavsId);
     res.status(result.statusCode);
     res.send(result.data);
   }
@@ -91,10 +81,7 @@ export class FavoritesController {
     const { params } = req;
     const newFavsId = params.id;
 
-    const result = this.favoritesService.deleteAlbumFromFavs(
-      newFavsId,
-      this.albumsArr,
-    );
+    const result = this.favoritesService.deleteAlbumFromFavs(newFavsId);
     res.status(result.statusCode);
     res.send(result.data);
   }
@@ -104,10 +91,7 @@ export class FavoritesController {
     const { params } = req;
     const newFavsId = params.id;
 
-    const result = this.favoritesService.deleteTrackFromFavs(
-      newFavsId,
-      this.trackArr,
-    );
+    const result = this.favoritesService.deleteTrackFromFavs(newFavsId);
     res.status(result.statusCode);
     res.send(result.data);
   }

@@ -64,6 +64,7 @@ export class ArtistService {
       data: message ? message : newArtist,
       statusCode: this.status,
     };
+    console.log('artist CREATED', newArtist);
     return result;
   }
 

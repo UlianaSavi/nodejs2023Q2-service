@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { ArtistService } from './artist.service';
 import { TrackService } from 'src/Tracks/track.service';
 import { AlbumService } from 'src/Albums/album.service';
+import { FavoritesService } from 'src/Favorites/favorites.service';
 
 @Controller('artist')
 export class ArtistController {
@@ -10,6 +11,7 @@ export class ArtistController {
     private readonly artistService: ArtistService,
     private readonly trackService: TrackService,
     private readonly albumService: AlbumService,
+    private readonly favsService: FavoritesService,
   ) {}
 
   @Get()
@@ -58,6 +60,14 @@ export class ArtistController {
 
     this.trackService.updateAfterDeletion(id);
     this.albumService.updateAfterArtistDeletion(id);
+
+    // delete deleted item also from favorites
+    const favsToDelIdx = this.favsService.favoritesIds.artists.findIndex(
+      (artistIdx) => artistIdx === id,
+    );
+    if (favsToDelIdx >= 0) {
+      this.favsService.deleteArtistFromFavs(id);
+    }
 
     res.status(artistRes.statusCode);
     res.send(artistRes.data);

@@ -1,10 +1,14 @@
 import { Controller, Get, Post, Put, Delete, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { TrackService } from './track.service';
+import { FavoritesService } from 'src/Favorites/favorites.service';
 
 @Controller('track')
 export class TrackController {
-  constructor(private readonly trackService: TrackService) {}
+  constructor(
+    private readonly trackService: TrackService,
+    private readonly favsService: FavoritesService,
+  ) {}
 
   @Get()
   getAll(@Res() res: Response) {
@@ -50,6 +54,16 @@ export class TrackController {
     const id = params.id;
 
     const trackRes = this.trackService.deleteTrack(id);
+
+    // delete deleted item also from favorites
+    const favsToDelIdx = this.favsService.favoritesIds.tracks.findIndex(
+      (trackIdx) => trackIdx === id,
+    );
+
+    if (favsToDelIdx >= 0) {
+      this.favsService.deleteTrackFromFavs(id);
+    }
+
     res.status(trackRes.statusCode);
     res.send(trackRes.data);
   }

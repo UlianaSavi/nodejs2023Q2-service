@@ -2,7 +2,7 @@ import { ITrack } from 'src/Tracks/track.model';
 import { INewUserPesponse, IUser } from '../Users/user.model';
 import { IArtist } from 'src/Artists/artist.model';
 import { IAlbum } from 'src/Albums/album.model';
-import { IFavorites } from 'src/Favorites/favorites.model';
+import { IFavoritesInstanses } from 'src/Favorites/favorites.model';
 
 export interface IResponse {
   data:
@@ -15,7 +15,7 @@ export interface IResponse {
     | IArtist
     | IAlbum[]
     | IAlbum
-    | IFavorites
+    | IFavoritesInstanses
     | string;
   statusCode: number;
 }

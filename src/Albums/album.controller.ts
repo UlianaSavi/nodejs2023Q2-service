@@ -2,12 +2,14 @@ import { Controller, Get, Post, Put, Delete, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { AlbumService } from './album.service';
 import { TrackService } from 'src/Tracks/track.service';
+import { FavoritesService } from 'src/Favorites/favorites.service';
 
 @Controller('album')
 export class AlbumController {
   constructor(
     private readonly albumService: AlbumService,
     private readonly trackService: TrackService,
+    private readonly favsService: FavoritesService,
   ) {}
 
   @Get()
@@ -55,6 +57,14 @@ export class AlbumController {
     const albumRes = this.albumService.deleteAlbum(id);
 
     this.trackService.updateAfterDeletion(id);
+
+    // delete deleted item also from favorites
+    const favsToDelIdx = this.favsService.favoritesIds.albums.findIndex(
+      (albumIdx) => albumIdx === id,
+    );
+    if (favsToDelIdx >= 0) {
+      this.favsService.deleteAlbumFromFavs(id);
+    }
 
     res.status(albumRes.statusCode);
     res.send(albumRes.data);
