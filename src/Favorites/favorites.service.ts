@@ -37,10 +37,6 @@ export class FavoritesService {
       (artInArr) => artInArr.id === artistId,
     );
 
-    console.log('artists ---> ', artists);
-    console.log('artistId ---> ', artistId);
-    console.log('candidateIdx ---> ', candidateIdx);
-
     if (!isValid) {
       this.status = StatusCodes.BAD_REQUEST;
       message = 'Invalid Id! (Not UUID type.)';
