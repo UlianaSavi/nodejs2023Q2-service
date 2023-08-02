@@ -19,13 +19,50 @@ npm install
 
 ## Running application
 
+### Usual start
 ```
 npm start
 ```
 
-After starting the app on port (`4000` as default) you can open
-in your browser OpenAPI documentation by typing `http://localhost:4000/doc/`.
-For more information about OpenAPI/Swagger please visit `https://swagger.io/`.
+### Start app with using Docker
+Create docker image:
+```
+docker build -t <YOUR IMAGE NAME> .
+```
+
+Find created docker image `ID` (table where `IMAGE ID` - our `ID`):
+```
+docker images
+```
+
+Create container in image: (after this command app already run in container)
+```
+docker run -d -p 4000:4000 --restart=always <IMAGE ID>
+```
+
+Find docker `ID` (table where `CONTAINER ID` - our `ID`):
+```
+docker ps
+```
+
+Stop container:
+```
+docker stop <CONTAINER ID>
+```
+
+Delete all containers:
+```
+docker container prune
+```
+
+Delete all images:
+```
+docker image prune
+```
+
+After starting the app on port (`4000` as default) you can open:
+- `http://localhost:4000/api/` - for see main page
+- `http://localhost:4000/doc/` OpenAPI documentation (For more information about OpenAPI/Swagger please visit `https://swagger.io/`.)
 
 ## Testing
 
@@ -72,34 +109,21 @@ Press <kbd>F5</kbd> to debug.
 For more information, visit: https://code.visualstudio.com/docs/editor/debugging
 
 
-### Information fot CROSSCHECK:
+### Information fot CROSSCHECK (#2):
 **RU**
-- Информация о старте сервака и прочем написана чуть выше, поэтому кастомная информация относится непостредственно к кроссчеку :)
-- По поводу запуска тестов: `npm run start` в одном терминале и параллельно `npm run test` - результатом должен быть экран на втором терминале как в PR в прикрипленном скриншоте. В таком случае выставляем соотв. пункту "+10 For each successfully passed test" - `+670` баллов (67 кейсов по 10 баллов за каждый)
-- За информацию в `readme.md` который вы сейчас читаете - `+10`
-- По поводу пунктов имеющих описание типа "divided into modules according to to its purpose and Nest.js architecture conventions (work with request and response in controller, business logic in service, etc.)" - заходите в любой файл с расширением `.controller.ts` в папке `src` - будет наглядно видно соответствие контроллера архитектурным паттеринам
-Неста + ниже использование роутов из `@nestjs/common`. Далее можно зайти в файлы с расширением `.servise.ts` - собстно сервисы. Тут вам будет видно бизнес логику - храниттся как и должна - по сервисам. Остальные файлы так же содержат только то, что должны по паттернам неста и ангуляра. - `+50` (10 баллов за каждый модуль. P.s. они там целом все аналогичны друг другу).
-- "PORT value is stored into .env file" - `+10` - есть файл `.env.example` - его нужно переименовать в `.env` и юзать.
-- "OpenAPI spec in doc folder corresponds with assignment" - для проверки этого пункта запустите сервак `npm run start`, откройте по пути, написаном в консоли (локалхост 4000) 
-и перейдите на роут `/doc` - увидите UI использующий файл `api.yaml` - проверить это использование можно зайдя в файлах в `main.ts` и посмотреть на строку
-`SwaggerModule.setup('doc', app, swaggerDocument);` - `+20`
-- запустите `npm run lint` - и если есть какие-то ошибки - за каждый НОВУЮ, не повторившуюся снимаем -10 баллов (но вообще ошибок быть не должно !!, поэтому если будут -
-пишите мне!) )
-
-Контакты указаны в ПР
+- Команды для запуска Docker указаны выше в нужной последовательности.
+- Чтобы проверить пункт "+20 Your built image is pushed to DockerHub" - запустите команду `docker pull ulianasavi/test-app`, а затем `docker images` - в списке images вы
+увидите экземпляр, взятый из моего репозитория DockerHub.
+- Рекомендация 1: не создавайте слишком много контейнеров, тк все может полететь из-за нехватки памяти на компе.
+- Рекомендация 2:Так же если вы используете Docker с винды - нужно учитывать, что docker desktop должен быть запущен. Он частенько может вылетать и нуждаться в перезагрузке, поэтому
+если видите ошибку, попробуйте перезапустить docker desktop, почистить все существующие контейнеры и images, созданные в процессе кроссчек
+и после этого заново пройтись по командам, указанным выше (создание и запуск контейнеров и т.д.)
 
 **EN**
-- Information about the start of the server and others is written a little higher, so this information is directly about crosscheck :)
-- About running tests: `npm run start` in one terminal and in parallel `npm run test` - the result should be a screen on the second terminal as in the PR in the attached screen. In this case, we set "+10 For each successfully passed test" - `+670` points (67 cases of 10 points each)
-- For information in `readme.md ` which you are reading now - `+10`
-- About items having a description of the type "divided into modules according to to its purpose and Nest.js architecture conventions (work with request and response in controller, business logic in service, etc.)" - go to any file with the extension `.controller.ts` in the folder `src` - the compliance of the controller with architectural patterns will be clearly visible
-Nest + below is the use of routes from `@nestjs/common'`. Then you can go to the files with the extension `.servise.ts` - own services. 
-Here you will see the business logic - stored as it should - by services. The rest of the files also contain only what they should according to the nest and angular patterns. - `+50` (10 points for each module. P.S. they are generally all similar to each other).
-- "PORT value is stored into .env file" - `+10` - there is a file `.env.example` - it needs to be renamed to `.env` and used.
-- "OpenAPI spec in doc folder correspondences with assignment" - to check this item, run the server `npm run start`, open the path written in the console (localhost 4000)
-and go to the router `/doc` in chrome - you will see the UI using the file `api.yaml` - you can check this file usage by going to the files in `main.ts` and look at the line
-`SwaggerModule.setup('doc', app, swaggerDocument);` - `+20`
-- run `npm run lint` - and if there are any errors - for each NEW, not repeated, we remove -10 points (but there should be no errors **at all!!**, so if there are -
-write to me!))
-
-Contacts are listed in the PR
+- The commands to run Docker are listed above in the correct sequence.
+- - To check the point "+20 Your build image is pushed to DockerHub" - run the command `docker pull ulianasavi/test-app`, and then `docker images` - in the images list you
+will see an instance taken from my DockerHub repository.
+- Recommendation 1: do not create too many containers, because everything can fly due to lack of memory on the computer.
+- Recommendation 2: Also, if you use Docker from Windows, you need to take into account that docker desktop must be running. It can often crash and need to be restarted, so
+if you see an error, try restarting docker desktop, cleaning all existing containers and images created during the crosscheck process
+and then re-go through the commands listed above (creating and starting containers, etc.)
