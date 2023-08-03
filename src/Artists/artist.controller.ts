@@ -32,10 +32,10 @@ export class ArtistController {
   }
 
   @Post()
-  create(@Req() req: Request, @Res() res: Response) {
+  async create(@Req() req: Request, @Res() res: Response) {
     const { body } = req;
 
-    const artistRes = this.artistService.createArtist(body);
+    const artistRes = await this.artistService.createArtist(body);
 
     res.status(artistRes.statusCode);
     res.send(artistRes.data);

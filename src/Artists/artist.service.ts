@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { validate } from 'uuid';
+import { v4 as uuidv4, validate } from 'uuid';
 import { IResponse } from 'src/models/response.model';
 import { StatusCodes } from 'http-status-codes';
 import { IArtist, IArtistDto } from './artist.model';
@@ -19,7 +19,7 @@ export class ArtistService {
   async getAll() {
     const artists = await this.artistRepository.find();
     const result: IResponse = {
-      data: artists,
+      data: artists.at(0) ? artists : [],
       statusCode: StatusCodes.OK,
     };
     return result;
@@ -29,8 +29,6 @@ export class ArtistService {
     let candidate: IArtist | null = null;
     let message: string | null = null;
     const isValid = validate(id);
-    console.log('HERE id ----> ', id);
-    console.log('HERE isValid ----> ', isValid);
 
     try {
       candidate = await this.artistRepository.findOneBy({ id: id });
@@ -56,7 +54,7 @@ export class ArtistService {
     return result;
   }
 
-  createArtist(dto: IArtistDto) {
+  async createArtist(dto: IArtistDto) {
     let message: string | null = null;
     let newArtist: IArtist | null = null;
 
@@ -64,9 +62,19 @@ export class ArtistService {
       message = 'Incorrect data for operation!';
       this.status = StatusCodes.BAD_REQUEST;
     } else {
-      newArtist = this.artistRepository.create(dto);
-
-      this.status = StatusCodes.CREATED;
+      newArtist = {
+        id: uuidv4(),
+        name: dto.name,
+        grammy: dto.grammy,
+      };
+      const res = await this.artistRepository.insert(newArtist);
+      if (res.identifiers.at(0)) {
+        this.status = StatusCodes.CREATED;
+        message = null;
+      } else {
+        this.status = StatusCodes.FORBIDDEN;
+        message = 'Operation failed!';
+      }
     }
     const result: IResponse = {
       data: message ? message : newArtist,
@@ -76,17 +84,18 @@ export class ArtistService {
   }
 
   async updateArtist(id: string, dto: IArtistDto) {
+    let candidate: IArtist | null = null;
     let artistToUpdate: IArtist | null = null;
     let message: string | null = null;
     const isValid = validate(id);
 
     try {
-      artistToUpdate = await this.artistRepository.findOneBy({ id: id });
+      candidate = await this.artistRepository.findOneBy({ id: id });
     } catch (error) {
-      artistToUpdate = null;
+      candidate = null;
     }
 
-    if (!artistToUpdate) {
+    if (!candidate) {
       message = `Artist with id ${id} not found!`;
       this.status = StatusCodes.NOT_FOUND;
     }
@@ -102,9 +111,14 @@ export class ArtistService {
       isValid &&
       typeof dto?.grammy === 'boolean' &&
       dto.name?.length &&
-      artistToUpdate
+      candidate
     ) {
-      this.artistRepository.update(artistToUpdate, dto);
+      artistToUpdate = {
+        id: candidate.id,
+        name: dto.name,
+        grammy: dto.grammy,
+      };
+      this.artistRepository.save(artistToUpdate);
       this.status = StatusCodes.OK;
     }
 
@@ -135,7 +149,7 @@ export class ArtistService {
       this.status = StatusCodes.NOT_FOUND;
     }
     if (isValid && candidate) {
-      await this.artistRepository.delete(id);
+      await this.artistRepository.remove(candidate);
       this.status = StatusCodes.NO_CONTENT;
     }
 
