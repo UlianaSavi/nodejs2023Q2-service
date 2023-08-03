@@ -25,13 +25,15 @@ export class FavoritesController {
   }
 
   @Post('artist/:id')
-  artists(@Req() req: Request, @Res() res: Response) {
+  async artists(@Req() req: Request, @Res() res: Response) {
     const { params } = req;
     const newFavsId = params.id;
 
+    const artistData = (await this.artistService.getAll()).data;
+
     const result = this.favoritesService.addArtistToFavs(
       newFavsId,
-      this.artistService.getAll().data as IArtist[],
+      artistData as IArtist[],
     );
 
     res.status(result.statusCode);

@@ -1,29 +1,42 @@
 import { Injectable } from '@nestjs/common';
-import { v4 as uuidv4, validate } from 'uuid';
+import { Repository } from 'typeorm';
+import { validate } from 'uuid';
 import { IResponse } from 'src/models/response.model';
 import { StatusCodes } from 'http-status-codes';
 import { IArtist, IArtistDto } from './artist.model';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Artist } from './artist.entity';
 
 @Injectable()
 export class ArtistService {
-  artists: IArtist[] = [];
   status: number | null = null;
 
-  getAll() {
+  constructor(
+    @InjectRepository(Artist)
+    private artistRepository: Repository<Artist>,
+  ) {}
+
+  async getAll() {
+    const artists = await this.artistRepository.find();
     const result: IResponse = {
-      data: this.artists,
+      data: artists,
       statusCode: StatusCodes.OK,
     };
     return result;
   }
 
-  getById(id: string) {
+  async getById(id: string) {
     let candidate: IArtist | null = null;
     let message: string | null = null;
     const isValid = validate(id);
+    console.log('HERE id ----> ', id);
+    console.log('HERE isValid ----> ', isValid);
 
-    candidate = this.artists.find((artist) => artist.id === id);
-
+    try {
+      candidate = await this.artistRepository.findOneBy({ id: id });
+    } catch (error) {
+      candidate = null;
+    }
     if (!isValid) {
       this.status = StatusCodes.BAD_REQUEST;
       message = 'Invalid Id! (Not UUID type.)';
@@ -51,14 +64,9 @@ export class ArtistService {
       message = 'Incorrect data for operation!';
       this.status = StatusCodes.BAD_REQUEST;
     } else {
-      newArtist = {
-        id: uuidv4(),
-        name: dto.name,
-        grammy: dto.grammy,
-      };
+      newArtist = this.artistRepository.create(dto);
 
       this.status = StatusCodes.CREATED;
-      this.artists.push(newArtist);
     }
     const result: IResponse = {
       data: message ? message : newArtist,
@@ -67,13 +75,18 @@ export class ArtistService {
     return result;
   }
 
-  updateArtist(id: string, dto: IArtistDto) {
+  async updateArtist(id: string, dto: IArtistDto) {
+    let artistToUpdate: IArtist | null = null;
     let message: string | null = null;
     const isValid = validate(id);
 
-    const artistToUpdateIdx = this.artists.findIndex((art) => art.id === id);
+    try {
+      artistToUpdate = await this.artistRepository.findOneBy({ id: id });
+    } catch (error) {
+      artistToUpdate = null;
+    }
 
-    if (artistToUpdateIdx < 0) {
+    if (!artistToUpdate) {
       message = `Artist with id ${id} not found!`;
       this.status = StatusCodes.NOT_FOUND;
     }
@@ -89,26 +102,29 @@ export class ArtistService {
       isValid &&
       typeof dto?.grammy === 'boolean' &&
       dto.name?.length &&
-      this.artists.at(artistToUpdateIdx) &&
-      artistToUpdateIdx >= 0
+      artistToUpdate
     ) {
-      this.artists.at(artistToUpdateIdx).grammy = dto.grammy;
-      this.artists.at(artistToUpdateIdx).name = dto.name;
+      this.artistRepository.update(artistToUpdate, dto);
       this.status = StatusCodes.OK;
     }
 
     const result: IResponse = {
-      data: message ? message : this.artists.at(artistToUpdateIdx),
+      data: message ? message : artistToUpdate,
       statusCode: this.status,
     };
     return result;
   }
 
-  deleteArtist(id: string) {
+  async deleteArtist(id: string) {
+    let candidate: IArtist | null = null;
     let message: string | null = null;
     const isValid = validate(id);
 
-    const candidate = this.artists.find((artist) => artist.id === id);
+    try {
+      candidate = await this.artistRepository.findOneBy({ id: id });
+    } catch (error) {
+      candidate = null;
+    }
 
     if (!isValid) {
       message = 'Invalid Id! (Not UUID type.)';
@@ -119,12 +135,13 @@ export class ArtistService {
       this.status = StatusCodes.NOT_FOUND;
     }
     if (isValid && candidate) {
-      const res = this.artists.filter((ArtistInDb) => ArtistInDb.id !== id);
-      this.artists = res;
+      await this.artistRepository.delete(id);
       this.status = StatusCodes.NO_CONTENT;
     }
+
+    const updatedArr = (await this.getAll()).data;
     const result: IResponse = {
-      data: message ? message : this.artists,
+      data: message ? message : updatedArr,
       statusCode: this.status,
     };
     return result;

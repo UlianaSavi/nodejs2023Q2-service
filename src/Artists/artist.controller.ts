@@ -15,18 +15,18 @@ export class ArtistController {
   ) {}
 
   @Get()
-  getAll(@Res() res: Response) {
-    const artistRes = this.artistService.getAll();
+  async getAll(@Res() res: Response) {
+    const artistRes = await this.artistService.getAll();
     res.status(artistRes.statusCode);
     res.send(artistRes.data);
   }
 
   @Get('/:id')
-  getById(@Req() req: Request, @Res() res: Response) {
+  async getById(@Req() req: Request, @Res() res: Response) {
     const { params } = req;
     const id = params.id;
 
-    const artistRes = this.artistService.getById(id);
+    const artistRes = await this.artistService.getById(id);
     res.status(artistRes.statusCode);
     res.send(artistRes.data);
   }
@@ -42,21 +42,21 @@ export class ArtistController {
   }
 
   @Put('/:id')
-  update(@Req() req: Request, @Res() res: Response) {
+  async update(@Req() req: Request, @Res() res: Response) {
     const { body, params } = req;
     const id = params.id;
 
-    const artistRes = this.artistService.updateArtist(id, body);
+    const artistRes = await this.artistService.updateArtist(id, body);
     res.status(artistRes.statusCode);
     res.send(artistRes.data);
   }
 
   @Delete('/:id')
-  delete(@Req() req: Request, @Res() res: Response) {
+  async delete(@Req() req: Request, @Res() res: Response) {
     const { params } = req;
     const id = params.id;
 
-    const artistRes = this.artistService.deleteArtist(id);
+    const artistRes = await this.artistService.deleteArtist(id);
 
     this.trackService.updateAfterDeletion(id);
     this.albumService.updateAfterArtistDeletion(id);
