@@ -9,87 +9,82 @@ import { ITrack } from 'src/Tracks/track.model';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { FavoritesIds } from './favorites.entity';
+import { ArtistService } from 'src/Artists/artist.service';
+import { TrackService } from 'src/Tracks/track.service';
+import { AlbumService } from 'src/Albums/album.service';
 
 @Injectable()
 export class FavoritesService {
   constructor(
     @InjectRepository(FavoritesIds)
     private favoritesRepository: Repository<FavoritesIds>,
+    private readonly artistService: ArtistService,
+    private readonly albumService: AlbumService,
+    private readonly trackService: TrackService,
   ) {}
   status: number | null = null;
 
-  async getAll(artists: IArtist[], albums: IAlbum[], tracks: ITrack[]) {
-    const ids = (await this.favoritesRepository.find()).at(0);
-    const favoritesInstanses = await this.getFavoritesInstanses(
-      ids,
-      artists,
-      albums,
-      tracks,
-    );
+  async getAll() {
+    const ids = await this.favoritesRepository.find({
+      relations: {
+        artirst: true,
+        album: true,
+        track: true,
+      },
+    });
     const result: IResponse = {
-      data: favoritesInstanses,
+      data: ids.reduce(
+        (acc, val) => {
+          const res = { ...acc };
+          if (val.artirst) {
+            res.artists.push(val.artirst);
+          }
+
+          if (val.album) {
+            res.albums.push(val.album);
+          }
+
+          if (val.track) {
+            res.tracks.push(val.track);
+          }
+
+          return res;
+        },
+        {
+          artists: [],
+          albums: [],
+          tracks: [],
+        },
+      ),
       statusCode: StatusCodes.OK,
     };
     return result;
   }
 
-  async getAllIds() {
-    const ids = (await this.favoritesRepository.find()).at(0);
-    return ids;
-  }
-
-  async getFavoritesInstanses(
-    ids: IFavoritesIds,
-    artists: IArtist[],
-    albums: IAlbum[],
-    tracks: ITrack[],
-  ) {
-    let artistsInFavs: IArtist[] | null = null;
-    ids.artists.map((id) => {
-      artistsInFavs = artists.filter((artist) => artist.id === id);
-    });
-
-    let albumsInFavs: IAlbum[] | null = null;
-    ids.albums.map((id) => {
-      albumsInFavs = albums.filter((album) => album.id === id);
-    });
-
-    let tracksInFavs: ITrack[] | null = null;
-    ids.tracks.map((id) => {
-      tracksInFavs = tracks.filter((track) => track.id === id);
-    });
-
-    const res: IFavoritesInstanses = {
-      artists: [...artistsInFavs],
-      albums: [...albumsInFavs],
-      tracks: [...tracksInFavs],
-    };
-
-    return res;
-  }
-
-  addArtistToFavs(artistId: string, artists: IArtist[]) {
+  async addArtistToFavs(artistId: string) {
     let message: string | null = null;
     const isValid = validate(artistId);
 
-    const candidateIdx = artists.findIndex(
-      (artInArr) => artInArr.id === artistId,
-    );
+    const candidate = (await this.artistService.getById(artistId))
+      .data as IArtist;
 
     if (!isValid) {
       this.status = StatusCodes.BAD_REQUEST;
       message = 'Invalid Id! (Not UUID type.)';
     }
-    if (candidateIdx < 0 && isValid) {
+    if (!candidate && isValid) {
       this.status = StatusCodes.UNPROCESSABLE_ENTITY;
       message = `Artist with id ${artistId} not found!`;
     }
-    if (candidateIdx >= 0 && isValid) {
-      const newFavIdx = artists.at(candidateIdx).id;
-
-      this.favoritesIds.artists.push(newFavIdx);
-
-      this.status = StatusCodes.CREATED;
+    if (candidate && isValid) {
+      try {
+        await this.favoritesRepository.insert({
+          artirst: () => candidate.id,
+        });
+        this.status = StatusCodes.CREATED;
+      } catch (error) {
+        message = 'Operation failed!';
+      }
     }
 
     const result: IResponse = {
@@ -99,28 +94,31 @@ export class FavoritesService {
     return result;
   }
 
-  addTrackToFavs(trackId: string, tracks: ITrack[]) {
+  async addTrackToFavs(trackId: string) {
     let message: string | null = null;
     const isValid = validate(trackId);
 
-    const candidateIdx = tracks.findIndex(
-      (artInArr) => artInArr.id === trackId,
-    );
+    // TODO: получить трек и привязать трек к favs
+
+    const candidate = (await this.trackService.getById(trackId)).data as ITrack;
 
     if (!isValid) {
       this.status = StatusCodes.BAD_REQUEST;
       message = 'Invalid Id! (Not UUID type.)';
     }
-    if (candidateIdx < 0 && isValid) {
+    if (!candidate && isValid) {
       this.status = StatusCodes.UNPROCESSABLE_ENTITY;
       message = `Track with id ${trackId} not found!`;
     }
-    if (candidateIdx >= 0 && isValid) {
-      const newFavIdx = tracks.at(candidateIdx).id;
-
-      this.favoritesIds.tracks.push(newFavIdx);
-
-      this.status = StatusCodes.CREATED;
+    if (candidate && isValid) {
+      try {
+        await this.favoritesRepository.insert({
+          track: () => candidate.id,
+        });
+        this.status = StatusCodes.CREATED;
+      } catch (error) {
+        message = 'Operation failed!';
+      }
     }
 
     const result: IResponse = {
@@ -130,28 +128,29 @@ export class FavoritesService {
     return result;
   }
 
-  addALbumToFavs(albumId: string, albums: IAlbum[]) {
+  async addALbumToFavs(albumId: string) {
     let message: string | null = null;
     const isValid = validate(albumId);
 
-    const candidateIdx = albums.findIndex(
-      (artInArr) => artInArr.id === albumId,
-    );
+    const candidate = (await this.albumService.getById(albumId)).data as IAlbum;
 
     if (!isValid) {
       this.status = StatusCodes.BAD_REQUEST;
       message = 'Invalid Id! (Not UUID type.)';
     }
-    if (candidateIdx < 0 && isValid) {
+    if (!candidate && isValid) {
       this.status = StatusCodes.UNPROCESSABLE_ENTITY;
       message = `Album with id ${albumId} not found!`;
     }
-    if (candidateIdx >= 0 && isValid) {
-      const newFavIdx = albums.at(candidateIdx).id;
-
-      this.favoritesIds.albums.push(newFavIdx);
-
-      this.status = StatusCodes.CREATED;
+    if (candidate && isValid) {
+      try {
+        await this.favoritesRepository.insert({
+          album: () => candidate.id,
+        });
+        this.status = StatusCodes.CREATED;
+      } catch (error) {
+        message = 'Operation failed!';
+      }
     }
 
     const result: IResponse = {
@@ -162,25 +161,26 @@ export class FavoritesService {
   }
 
   async deleteArtistFromFavs(artistId: string) {
+    let candidate: IArtist | null = null;
     let message: string | null = null;
     const isValid = validate(artistId);
 
-    const ids = await this.getAllIds();
-
-    const candidateIdx = ids.artists.findIndex(
-      (artIdInArr) => artIdInArr === artistId,
-    );
+    try {
+      candidate = (await this.artistService.getById(artistId)).data as IArtist;
+    } catch (error) {
+      candidate = null;
+    }
 
     if (!isValid) {
       this.status = StatusCodes.BAD_REQUEST;
       message = 'Invalid Id! (Not UUID type.)';
     }
-    if (candidateIdx < 0 && isValid) {
+    if (!candidate && isValid) {
       this.status = StatusCodes.NOT_FOUND;
       message = `Artist with id ${artistId} not found!`;
     }
-    if (candidateIdx >= 0 && isValid) {
-      this.favoritesIds.artists.splice(candidateIdx, 1);
+    if (candidate && isValid) {
+      await this.favoritesRepository.remove(candidate.id);
 
       this.status = StatusCodes.NO_CONTENT;
     }
@@ -195,8 +195,6 @@ export class FavoritesService {
   async deleteAlbumFromFavs(albumId: string) {
     let message: string | null = null;
     const isValid = validate(albumId);
-
-    const ids = await this.getAllIds();
 
     const candidateIdx = ids.artists.findIndex(
       (albumIdInArr) => albumIdInArr === albumId,
@@ -226,8 +224,6 @@ export class FavoritesService {
   async deleteTrackFromFavs(trackId: string) {
     let message: string | null = null;
     const isValid = validate(trackId);
-
-    const ids = await this.getAllIds();
 
     const candidateIdx = ids.artists.findIndex(
       (trackIdInArr) => trackIdInArr === trackId,

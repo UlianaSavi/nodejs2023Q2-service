@@ -6,7 +6,6 @@ import { IAlbum, IAlbumDto } from './album.model';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Album } from './album.entity';
-import { Artist } from 'src/Artists/artist.entity';
 
 @Injectable()
 export class AlbumService {
@@ -15,7 +14,6 @@ export class AlbumService {
   constructor(
     @InjectRepository(Album)
     private albumRepository: Repository<Album>,
-    private artistRepository: Repository<Artist>,
   ) {}
 
   async getAll() {

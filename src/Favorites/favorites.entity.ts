@@ -1,16 +1,22 @@
-import { Entity, Column, PrimaryColumn } from 'typeorm';
+import { Album } from 'src/Albums/album.entity';
+import { Artist } from 'src/Artists/artist.entity';
+import { Track } from 'src/Tracks/track.entity';
+import { Entity, PrimaryColumn, OneToOne, JoinColumn } from 'typeorm';
 
 @Entity()
 export class FavoritesIds {
-  @PrimaryColumn('uuid')
-  id: string;
+  @PrimaryColumn()
+  id: number;
 
-  @Column('simple-array', { nullable: true, unique: true })
-  artists: string[];
+  @OneToOne(() => Artist)
+  @JoinColumn()
+  artirst: Artist;
 
-  @Column('simple-array', { nullable: true, unique: true })
-  albums: string[];
+  @OneToOne(() => Album)
+  @JoinColumn()
+  album: Album;
 
-  @Column('simple-array', { nullable: true, unique: true })
-  tracks: string[];
+  @OneToOne(() => Track)
+  @JoinColumn()
+  track: Track;
 }

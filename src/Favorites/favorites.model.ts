@@ -3,9 +3,10 @@ import { IArtist } from 'src/Artists/artist.model';
 import { ITrack } from 'src/Tracks/track.model';
 
 export interface IFavoritesIds {
-  artists: string[];
-  albums: string[];
-  tracks: string[];
+  id: number;
+  artirstId: string;
+  albumId: string;
+  trackId: string;
 }
 
 export interface IFavoritesInstanses {
