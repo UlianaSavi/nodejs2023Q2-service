@@ -180,9 +180,22 @@ export class FavoritesService {
       message = `Artist with id ${artistId} not found!`;
     }
     if (candidate && isValid) {
-      await this.favoritesRepository.remove(candidate.id);
+      const artistsFavs = await this.favoritesRepository.find({
+        relations: {
+          artirst: true,
+        },
+      });
 
-      this.status = StatusCodes.NO_CONTENT;
+      const artistToDel = artistsFavs.find(
+        (favs) => favs.artirst.id === candidate.id,
+      );
+
+      try {
+        await this.favoritesRepository.remove(artistToDel);
+        this.status = StatusCodes.NO_CONTENT;
+      } catch (error) {
+        message = 'Operation failed!';
+      }
     }
 
     const result: IResponse = {
@@ -193,25 +206,41 @@ export class FavoritesService {
   }
 
   async deleteAlbumFromFavs(albumId: string) {
+    let candidate: IAlbum | null = null;
     let message: string | null = null;
     const isValid = validate(albumId);
 
-    const candidateIdx = ids.artists.findIndex(
-      (albumIdInArr) => albumIdInArr === albumId,
-    );
+    try {
+      candidate = (await this.albumService.getById(albumId)).data as IAlbum;
+    } catch (error) {
+      candidate = null;
+    }
 
     if (!isValid) {
       this.status = StatusCodes.BAD_REQUEST;
       message = 'Invalid Id! (Not UUID type.)';
     }
-    if (candidateIdx < 0 && isValid) {
+    if (!candidate && isValid) {
       this.status = StatusCodes.NOT_FOUND;
       message = `Album with id ${albumId} not found!`;
     }
-    if (candidateIdx >= 0 && isValid) {
-      this.favoritesIds.albums.splice(candidateIdx, 1);
+    if (candidate && isValid) {
+      const albumsFavs = await this.favoritesRepository.find({
+        relations: {
+          album: true,
+        },
+      });
 
-      this.status = StatusCodes.NO_CONTENT;
+      const albumToDel = albumsFavs.find(
+        (favs) => favs.album.id === candidate.id,
+      );
+
+      try {
+        await this.favoritesRepository.remove(albumToDel);
+        this.status = StatusCodes.NO_CONTENT;
+      } catch (error) {
+        message = 'Operation failed!';
+      }
     }
 
     const result: IResponse = {
@@ -222,25 +251,41 @@ export class FavoritesService {
   }
 
   async deleteTrackFromFavs(trackId: string) {
+    let candidate: ITrack | null = null;
     let message: string | null = null;
     const isValid = validate(trackId);
 
-    const candidateIdx = ids.artists.findIndex(
-      (trackIdInArr) => trackIdInArr === trackId,
-    );
+    try {
+      candidate = (await this.trackService.getById(trackId)).data as ITrack;
+    } catch (error) {
+      candidate = null;
+    }
 
     if (!isValid) {
       this.status = StatusCodes.BAD_REQUEST;
       message = 'Invalid Id! (Not UUID type.)';
     }
-    if (candidateIdx < 0 && isValid) {
+    if (!candidate && isValid) {
       this.status = StatusCodes.NOT_FOUND;
       message = `Track with id ${trackId} not found!`;
     }
-    if (candidateIdx >= 0 && isValid) {
-      this.favoritesIds.tracks.splice(candidateIdx, 1);
+    if (candidate && isValid) {
+      const tracksFavs = await this.favoritesRepository.find({
+        relations: {
+          track: true,
+        },
+      });
 
-      this.status = StatusCodes.NO_CONTENT;
+      const trackToDel = tracksFavs.find(
+        (favs) => favs.track.id === candidate.id,
+      );
+
+      try {
+        await this.favoritesRepository.remove(trackToDel);
+        this.status = StatusCodes.NO_CONTENT;
+      } catch (error) {
+        message = 'Operation failed!';
+      }
     }
 
     const result: IResponse = {
