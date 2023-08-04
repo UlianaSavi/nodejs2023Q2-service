@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { IResponse } from 'src/models/response.model';
 import { validate } from 'uuid';
 import { StatusCodes } from 'http-status-codes';
-import { IFavoritesIds, IFavoritesInstanses } from './favorites.model';
 import { IArtist } from 'src/Artists/artist.model';
 import { IAlbum } from 'src/Albums/album.model';
 import { ITrack } from 'src/Tracks/track.model';
@@ -118,6 +117,7 @@ export class FavoritesService {
         this.status = StatusCodes.CREATED;
       } catch (error) {
         message = 'Operation failed!';
+        this.status = StatusCodes.CONFLICT;
       }
     }
 
@@ -150,6 +150,7 @@ export class FavoritesService {
         this.status = StatusCodes.CREATED;
       } catch (error) {
         message = 'Operation failed!';
+        this.status = StatusCodes.CONFLICT;
       }
     }
 
@@ -195,6 +196,7 @@ export class FavoritesService {
         this.status = StatusCodes.NO_CONTENT;
       } catch (error) {
         message = 'Operation failed!';
+        this.status = StatusCodes.CONFLICT;
       }
     }
 
@@ -240,6 +242,7 @@ export class FavoritesService {
         this.status = StatusCodes.NO_CONTENT;
       } catch (error) {
         message = 'Operation failed!';
+        this.status = StatusCodes.CONFLICT;
       }
     }
 
@@ -285,6 +288,7 @@ export class FavoritesService {
         this.status = StatusCodes.NO_CONTENT;
       } catch (error) {
         message = 'Operation failed!';
+        this.status = StatusCodes.CONFLICT;
       }
     }
 

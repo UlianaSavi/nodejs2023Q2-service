@@ -86,11 +86,10 @@ export class ArtistController {
     }
 
     // delete deleted item also from favorites
-    const favsToDelIdx = this.favsService.favoritesIds.artists.findIndex(
-      (artistIdx) => artistIdx === id,
-    );
-    if (favsToDelIdx >= 0) {
-      this.favsService.deleteArtistFromFavs(id);
+    try {
+      await this.favsService.deleteArtistFromFavs(id);
+    } catch (error) {
+      res.status(error.statusCode);
     }
 
     res.status(artistRes.statusCode);

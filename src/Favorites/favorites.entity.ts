@@ -10,13 +10,16 @@ export class FavoritesIds {
 
   @OneToOne(() => Artist)
   @JoinColumn()
-  artirst: Artist;
+  artirst: Artist | null;
 
   @OneToOne(() => Album)
   @JoinColumn()
-  album: Album;
+  album: Album | null;
+
+  // TODO: решить трабл с сетингом null
+  // ошибка: значение NULL в столбце "artistId" отношения "album" нарушает ограничение NOT NULL
 
   @OneToOne(() => Track)
   @JoinColumn()
-  track: Track;
+  track: Track | null;
 }

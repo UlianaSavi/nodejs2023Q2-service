@@ -72,11 +72,10 @@ export class AlbumController {
     }
 
     // delete deleted item also from favorites
-    const favsToDelIdx = this.favsService.favoritesIds.albums.findIndex(
-      (albumIdx) => albumIdx === id,
-    );
-    if (favsToDelIdx >= 0) {
-      this.favsService.deleteAlbumFromFavs(id);
+    try {
+      await this.favsService.deleteAlbumFromFavs(id);
+    } catch (error) {
+      res.status(error.statusCode);
     }
 
     res.status(albumRes.statusCode);

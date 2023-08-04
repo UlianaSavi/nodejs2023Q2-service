@@ -9,6 +9,9 @@ import { FavoritesModule } from './Favorites/favorites.module';
 import { AuthModule } from './Auth/auth.module';
 import { AlbumModule } from './Albums/album.module';
 import { Artist } from './Artists/artist.entity';
+import { Album } from './Albums/album.entity';
+import { Track } from './Tracks/track.entity';
+import { FavoritesIds } from './Favorites/favorites.entity';
 
 @Module({
   imports: [
@@ -25,7 +28,7 @@ import { Artist } from './Artists/artist.entity';
       username: 'postgres',
       password: 'root',
       database: 'Node-js-server',
-      entities: [Artist],
+      entities: [Artist, Album, Track, FavoritesIds],
       synchronize: true,
     }),
   ],

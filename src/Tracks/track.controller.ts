@@ -11,57 +11,55 @@ export class TrackController {
   ) {}
 
   @Get()
-  getAll(@Res() res: Response) {
-    const trackRes = this.trackService.getAll();
+  async getAll(@Res() res: Response) {
+    const trackRes = await this.trackService.getAll();
     res.status(trackRes.statusCode);
     res.send(trackRes.data);
   }
 
   @Get('/:id')
-  getById(@Req() req: Request, @Res() res: Response) {
+  async getById(@Req() req: Request, @Res() res: Response) {
     const { params } = req;
     const id = params.id;
 
-    const trackRes = this.trackService.getById(id);
+    const trackRes = await this.trackService.getById(id);
 
     res.status(trackRes.statusCode);
     res.send(trackRes.data);
   }
 
   @Post()
-  create(@Req() req: Request, @Res() res: Response) {
+  async create(@Req() req: Request, @Res() res: Response) {
     const { body } = req;
 
-    const trackRes = this.trackService.createTrack(body);
+    const trackRes = await this.trackService.createTrack(body);
 
     res.status(trackRes.statusCode);
     res.send(trackRes.data);
   }
 
   @Put('/:id')
-  update(@Req() req: Request, @Res() res: Response) {
+  async update(@Req() req: Request, @Res() res: Response) {
     const { body, params } = req;
     const id = params.id;
 
-    const trackRes = this.trackService.updateTrackPassword(id, body);
+    const trackRes = await this.trackService.updateTrackPassword(id, body);
     res.status(trackRes.statusCode);
     res.send(trackRes.data);
   }
 
   @Delete('/:id')
-  delete(@Req() req: Request, @Res() res: Response) {
+  async delete(@Req() req: Request, @Res() res: Response) {
     const { params } = req;
     const id = params.id;
 
-    const trackRes = this.trackService.deleteTrack(id);
+    const trackRes = await this.trackService.deleteTrack(id);
 
     // delete deleted item also from favorites
-    const favsToDelIdx = this.favsService.favoritesIds.tracks.findIndex(
-      (trackIdx) => trackIdx === id,
-    );
-
-    if (favsToDelIdx >= 0) {
+    try {
       this.favsService.deleteTrackFromFavs(id);
+    } catch (error) {
+      res.status(error.statusCode);
     }
 
     res.status(trackRes.statusCode);

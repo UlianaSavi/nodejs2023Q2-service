@@ -1,9 +1,6 @@
 import { Controller, Get, Post, Delete, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { FavoritesService } from './favorites.service';
-import { IArtist } from 'src/Artists/artist.model';
-import { IAlbum } from 'src/Albums/album.model';
-import { ITrack } from 'src/Tracks/track.model';
 
 @Controller('favs')
 export class FavoritesController {
