@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { AlbumService } from './album.service';
 import { TrackService } from 'src/Tracks/track.service';
 import { FavoritesService } from 'src/Favorites/favorites.service';
+import { ITrack } from 'src/Tracks/track.model';
 
 @Controller('album')
 export class AlbumController {
@@ -13,50 +14,62 @@ export class AlbumController {
   ) {}
 
   @Get()
-  getAll(@Res() res: Response) {
-    const albumRes = this.albumService.getAll();
+  async getAll(@Res() res: Response) {
+    const albumRes = await this.albumService.getAll();
     res.status(albumRes.statusCode);
     res.send(albumRes.data);
   }
 
   @Get('/:id')
-  getById(@Req() req: Request, @Res() res: Response) {
+  async getById(@Req() req: Request, @Res() res: Response) {
     const { params } = req;
     const id = params.id;
 
-    const albumRes = this.albumService.getById(id);
+    const albumRes = await this.albumService.getById(id);
     res.status(albumRes.statusCode);
     res.send(albumRes.data);
   }
 
   @Post()
-  create(@Req() req: Request, @Res() res: Response) {
+  async create(@Req() req: Request, @Res() res: Response) {
     const { body } = req;
 
-    const albumRes = this.albumService.createAlbum(body);
+    const albumRes = await this.albumService.createAlbum(body);
 
     res.status(albumRes.statusCode);
     res.send(albumRes.data);
   }
 
   @Put('/:id')
-  update(@Req() req: Request, @Res() res: Response) {
+  async update(@Req() req: Request, @Res() res: Response) {
     const { body, params } = req;
     const id = params.id;
 
-    const albumRes = this.albumService.updateAlbum(id, body);
+    const albumRes = await this.albumService.updateAlbum(id, body);
     res.status(albumRes.statusCode);
     res.send(albumRes.data);
   }
 
   @Delete('/:id')
-  delete(@Req() req: Request, @Res() res: Response) {
+  async delete(@Req() req: Request, @Res() res: Response) {
     const { params } = req;
     const id = params.id;
 
-    const albumRes = this.albumService.deleteAlbum(id);
+    const albumRes = await this.albumService.deleteAlbum(id);
 
-    this.trackService.updateAfterDeletion(id);
+    if (albumRes.data) {
+      // set track.artistId && track.albumId to null after deletion album or artist
+      const trackCandidate = (await this.trackService.getById(id))
+        .data as ITrack;
+      const trackDto = {
+        name: trackCandidate.name,
+        duration: trackCandidate.duration,
+        artistId: null,
+        albumId: null,
+      };
+
+      await this.trackService.updateTrack(id, trackDto);
+    }
 
     // delete deleted item also from favorites
     const favsToDelIdx = this.favsService.favoritesIds.albums.findIndex(

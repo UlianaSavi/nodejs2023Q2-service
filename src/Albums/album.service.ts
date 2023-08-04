@@ -3,26 +3,40 @@ import { v4 as uuidv4, validate } from 'uuid';
 import { IResponse } from 'src/models/response.model';
 import { StatusCodes } from 'http-status-codes';
 import { IAlbum, IAlbumDto } from './album.model';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Album } from './album.entity';
+import { Artist } from 'src/Artists/artist.entity';
 
 @Injectable()
 export class AlbumService {
-  albums: IAlbum[] = [];
   status: number | null = null;
 
-  getAll() {
+  constructor(
+    @InjectRepository(Album)
+    private albumRepository: Repository<Album>,
+    private artistRepository: Repository<Artist>,
+  ) {}
+
+  async getAll() {
+    const albums = await this.albumRepository.find();
     const result: IResponse = {
-      data: this.albums,
+      data: albums.at(0) ? albums : [],
       statusCode: StatusCodes.OK,
     };
     return result;
   }
 
-  getById(id: string) {
+  async getById(id: string) {
     let candidate: IAlbum | null = null;
     let message: string | null = null;
     const isValid = validate(id);
 
-    candidate = this.albums.find((album) => album.id === id);
+    try {
+      candidate = await this.albumRepository.findOneBy({ id: id });
+    } catch (error) {
+      candidate = null;
+    }
 
     if (!isValid) {
       this.status = StatusCodes.BAD_REQUEST;
@@ -43,7 +57,7 @@ export class AlbumService {
     return result;
   }
 
-  createAlbum(dto: IAlbumDto) {
+  async createAlbum(dto: IAlbumDto) {
     let message: string | null = null;
     let newAlbum: IAlbum | null = null;
 
@@ -58,8 +72,15 @@ export class AlbumService {
         artistId: dto.artistId,
       };
 
-      this.status = StatusCodes.CREATED;
-      this.albums.push(newAlbum);
+      const res = await this.albumRepository.insert(newAlbum);
+
+      if (res.identifiers.at(0)) {
+        this.status = StatusCodes.CREATED;
+        message = null;
+      } else {
+        this.status = StatusCodes.FORBIDDEN;
+        message = 'Operation failed!';
+      }
     }
     const result: IResponse = {
       data: message ? message : newAlbum,
@@ -68,13 +89,19 @@ export class AlbumService {
     return result;
   }
 
-  updateAlbum(id: string, dto: IAlbumDto) {
+  async updateAlbum(id: string, dto: IAlbumDto) {
     let message: string | null = null;
+    let candidate: IAlbum | null = null;
+    let albumToUpdate: IAlbum | null = null;
     const isValid = validate(id);
 
-    const albumToUpdateIdx = this.albums.findIndex((art) => art.id === id);
+    try {
+      candidate = await this.albumRepository.findOneBy({ id: id });
+    } catch (error) {
+      candidate = null;
+    }
 
-    if (albumToUpdateIdx < 0) {
+    if (!candidate) {
       message = `Album with id ${id} not found!`;
       this.status = StatusCodes.NOT_FOUND;
     }
@@ -86,31 +113,39 @@ export class AlbumService {
       message = 'Invalid DTO!';
       this.status = StatusCodes.BAD_REQUEST;
     }
-    if (
-      isValid &&
-      dto?.name?.length &&
-      dto?.year &&
-      this.albums.at(albumToUpdateIdx) &&
-      albumToUpdateIdx >= 0
-    ) {
-      this.albums.at(albumToUpdateIdx).name = dto.name;
-      this.albums.at(albumToUpdateIdx).year = dto.year;
-      this.albums.at(albumToUpdateIdx).artistId = dto.artistId;
+    if (isValid && dto?.name?.length && dto?.year && candidate) {
+      albumToUpdate = {
+        id: candidate.id,
+        name: dto.name,
+        year: dto.year,
+        artistId: dto.artistId,
+      };
+      try {
+        await this.albumRepository.save(albumToUpdate);
+        this.status = StatusCodes.OK;
+      } catch (error) {
+        message = 'Operation failed!';
+      }
       this.status = StatusCodes.OK;
     }
 
     const result: IResponse = {
-      data: message ? message : this.albums.at(albumToUpdateIdx),
+      data: message ? message : albumToUpdate,
       statusCode: this.status,
     };
     return result;
   }
 
-  deleteAlbum(id: string) {
+  async deleteAlbum(id: string) {
+    let candidate: IAlbum | null = null;
     let message: string | null = null;
     const isValid = validate(id);
 
-    const candidate = this.albums.find((album) => album.id === id);
+    try {
+      candidate = await this.albumRepository.findOneBy({ id: id });
+    } catch (error) {
+      candidate = null;
+    }
 
     if (!isValid) {
       message = 'Invalid Id! (Not UUID type.)';
@@ -121,24 +156,16 @@ export class AlbumService {
       this.status = StatusCodes.NOT_FOUND;
     }
     if (isValid && candidate) {
-      const res = this.albums.filter((AlbumInDb) => AlbumInDb.id !== id);
-      this.albums = res;
+      await this.albumRepository.remove(candidate);
       this.status = StatusCodes.NO_CONTENT;
     }
+
+    const updatedArr = (await this.getAll()).data;
+
     const result: IResponse = {
-      data: message ? message : this.albums,
+      data: message ? message : updatedArr,
       statusCode: this.status,
     };
     return result;
-  }
-
-  // set album.artistId to null after deletion artist
-  updateAfterArtistDeletion(id: string) {
-    const candidateIdx = this.albums.findIndex(
-      (albums) => albums.artistId === id,
-    );
-    if (this.albums.at(candidateIdx)) {
-      this.albums.at(candidateIdx).artistId = null;
-    }
   }
 }

@@ -18,8 +18,17 @@ export class FavoritesController {
   ) {}
 
   @Get()
-  getAll(@Res() res: Response) {
-    const result = this.favoritesService.getAll();
+  async getAll(@Res() res: Response) {
+    const artistData = (await this.artistService.getAll()).data as IArtist[];
+    const albumData = (await this.albumService.getAll()).data as IAlbum[];
+    const trackData = (await this.trackService.getAll()).data as ITrack[];
+
+    const result = await this.favoritesService.getAll(
+      artistData,
+      albumData,
+      trackData,
+    );
+
     res.status(result.statusCode);
     res.send(result.data);
   }
@@ -41,28 +50,24 @@ export class FavoritesController {
   }
 
   @Post('album/:id')
-  albums(@Req() req: Request, @Res() res: Response) {
+  async albums(@Req() req: Request, @Res() res: Response) {
     const { params } = req;
     const newFavsId = params.id;
+    const albumData = (await this.albumService.getAll()).data as IAlbum[];
 
-    const result = this.favoritesService.addALbumToFavs(
-      newFavsId,
-      this.albumService.getAll().data as IAlbum[],
-    );
+    const result = this.favoritesService.addALbumToFavs(newFavsId, albumData);
 
     res.status(result.statusCode);
     res.send(result.data);
   }
 
   @Post('track/:id')
-  track(@Req() req: Request, @Res() res: Response) {
+  async track(@Req() req: Request, @Res() res: Response) {
     const { params } = req;
     const newFavsId = params.id;
+    const trackData = (await this.trackService.getAll()).data as ITrack[];
 
-    const result = this.favoritesService.addTrackToFavs(
-      newFavsId,
-      this.trackService.getAll().data as ITrack[],
-    );
+    const result = this.favoritesService.addTrackToFavs(newFavsId, trackData);
 
     res.status(result.statusCode);
     res.send(result.data);
@@ -74,6 +79,7 @@ export class FavoritesController {
     const newFavsId = params.id;
 
     const result = this.favoritesService.deleteArtistFromFavs(newFavsId);
+
     res.status(result.statusCode);
     res.send(result.data);
   }
@@ -84,6 +90,7 @@ export class FavoritesController {
     const newFavsId = params.id;
 
     const result = this.favoritesService.deleteAlbumFromFavs(newFavsId);
+
     res.status(result.statusCode);
     res.send(result.data);
   }
@@ -94,6 +101,7 @@ export class FavoritesController {
     const newFavsId = params.id;
 
     const result = this.favoritesService.deleteTrackFromFavs(newFavsId);
+
     res.status(result.statusCode);
     res.send(result.data);
   }

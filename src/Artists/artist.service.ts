@@ -118,8 +118,12 @@ export class ArtistService {
         name: dto.name,
         grammy: dto.grammy,
       };
-      this.artistRepository.save(artistToUpdate);
-      this.status = StatusCodes.OK;
+      try {
+        await this.artistRepository.save(artistToUpdate);
+        this.status = StatusCodes.OK;
+      } catch (error) {
+        message = 'Operation failed!';
+      }
     }
 
     const result: IResponse = {
@@ -149,8 +153,12 @@ export class ArtistService {
       this.status = StatusCodes.NOT_FOUND;
     }
     if (isValid && candidate) {
-      await this.artistRepository.remove(candidate);
-      this.status = StatusCodes.NO_CONTENT;
+      try {
+        await this.artistRepository.remove(candidate);
+        this.status = StatusCodes.NO_CONTENT;
+      } catch (error) {
+        message = 'Operation failed!';
+      }
     }
 
     const updatedArr = (await this.getAll()).data;

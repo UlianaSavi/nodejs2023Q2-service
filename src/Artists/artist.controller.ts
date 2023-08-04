@@ -4,6 +4,8 @@ import { ArtistService } from './artist.service';
 import { TrackService } from 'src/Tracks/track.service';
 import { AlbumService } from 'src/Albums/album.service';
 import { FavoritesService } from 'src/Favorites/favorites.service';
+import { IAlbum } from 'src/Albums/album.model';
+import { ITrack } from 'src/Tracks/track.model';
 
 @Controller('artist')
 export class ArtistController {
@@ -58,8 +60,30 @@ export class ArtistController {
 
     const artistRes = await this.artistService.deleteArtist(id);
 
-    this.trackService.updateAfterDeletion(id);
-    this.albumService.updateAfterArtistDeletion(id);
+    if (artistRes.data) {
+      // set album.artistId to null after deletion artist
+      const albumCandidate = (await this.albumService.getById(id))
+        .data as IAlbum;
+      const albumDto = {
+        name: albumCandidate.name,
+        year: albumCandidate.year,
+        artistId: null,
+      };
+
+      await this.albumService.updateAlbum(id, albumDto);
+
+      // set track.artistId && track.albumId to null after deletion album or artist
+      const trackCandidate = (await this.trackService.getById(id))
+        .data as ITrack;
+      const trackDto = {
+        name: trackCandidate.name,
+        duration: trackCandidate.duration,
+        artistId: null,
+        albumId: null,
+      };
+
+      await this.trackService.updateTrack(id, trackDto);
+    }
 
     // delete deleted item also from favorites
     const favsToDelIdx = this.favsService.favoritesIds.artists.findIndex(

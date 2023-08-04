@@ -6,6 +6,9 @@ import { IFavoritesIds, IFavoritesInstanses } from './favorites.model';
 import { IArtist } from 'src/Artists/artist.model';
 import { IAlbum } from 'src/Albums/album.model';
 import { ITrack } from 'src/Tracks/track.model';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { FavoritesIds } from './favorites.entity';
 
 @Injectable()
 export class FavoritesService {
@@ -14,19 +17,56 @@ export class FavoritesService {
     albums: [],
     tracks: [],
   };
-  favoritesInstanses: IFavoritesInstanses = {
-    artists: [],
-    albums: [],
-    tracks: [],
-  };
+
+  constructor(
+    @InjectRepository(FavoritesIds)
+    private favoritesRepository: Repository<FavoritesIds>,
+  ) {}
   status: number | null = null;
 
-  getAll() {
+  async getAll(artists: IArtist[], albums: IAlbum[], tracks: ITrack[]) {
+    const ids = (await this.favoritesRepository.find()).at(0);
+    const favoritesInstanses = await this.getFavoritesInstanses(
+      ids,
+      artists,
+      albums,
+      tracks,
+    );
     const result: IResponse = {
-      data: this.favoritesInstanses,
+      data: favoritesInstanses,
       statusCode: StatusCodes.OK,
     };
     return result;
+  }
+
+  async getFavoritesInstanses(
+    ids: IFavoritesIds,
+    artists: IArtist[],
+    albums: IAlbum[],
+    tracks: ITrack[],
+  ) {
+    let artistsInFavs: IArtist[] | null = null;
+    ids.artists.map((id) => {
+      artistsInFavs = artists.filter((artist) => artist.id === id);
+    });
+
+    let albumsInFavs: IAlbum[] | null = null;
+    ids.albums.map((id) => {
+      albumsInFavs = albums.filter((album) => album.id === id);
+    });
+
+    let tracksInFavs: ITrack[] | null = null;
+    ids.tracks.map((id) => {
+      tracksInFavs = tracks.filter((track) => track.id === id);
+    });
+
+    const res: IFavoritesInstanses = {
+      artists: [...artistsInFavs],
+      albums: [...albumsInFavs],
+      tracks: [...tracksInFavs],
+    };
+
+    return res;
   }
 
   addArtistToFavs(artistId: string, artists: IArtist[]) {
