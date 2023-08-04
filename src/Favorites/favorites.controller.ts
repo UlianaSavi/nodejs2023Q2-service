@@ -74,33 +74,33 @@ export class FavoritesController {
   }
 
   @Delete('artist/:id')
-  deleteArtist(@Req() req: Request, @Res() res: Response) {
+  async deleteArtist(@Req() req: Request, @Res() res: Response) {
     const { params } = req;
     const newFavsId = params.id;
 
-    const result = this.favoritesService.deleteArtistFromFavs(newFavsId);
+    const result = await this.favoritesService.deleteArtistFromFavs(newFavsId);
 
     res.status(result.statusCode);
     res.send(result.data);
   }
 
   @Delete('album/:id')
-  deleteAlbum(@Req() req: Request, @Res() res: Response) {
+  async deleteAlbum(@Req() req: Request, @Res() res: Response) {
     const { params } = req;
     const newFavsId = params.id;
 
-    const result = this.favoritesService.deleteAlbumFromFavs(newFavsId);
+    const result = await this.favoritesService.deleteAlbumFromFavs(newFavsId);
 
     res.status(result.statusCode);
     res.send(result.data);
   }
 
   @Delete('track/:id')
-  deleteTrack(@Req() req: Request, @Res() res: Response) {
+  async deleteTrack(@Req() req: Request, @Res() res: Response) {
     const { params } = req;
     const newFavsId = params.id;
 
-    const result = this.favoritesService.deleteTrackFromFavs(newFavsId);
+    const result = await this.favoritesService.deleteTrackFromFavs(newFavsId);
 
     res.status(result.statusCode);
     res.send(result.data);

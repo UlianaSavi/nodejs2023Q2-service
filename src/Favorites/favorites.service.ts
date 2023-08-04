@@ -12,12 +12,6 @@ import { FavoritesIds } from './favorites.entity';
 
 @Injectable()
 export class FavoritesService {
-  favoritesIds: IFavoritesIds = {
-    artists: [],
-    albums: [],
-    tracks: [],
-  };
-
   constructor(
     @InjectRepository(FavoritesIds)
     private favoritesRepository: Repository<FavoritesIds>,
@@ -37,6 +31,11 @@ export class FavoritesService {
       statusCode: StatusCodes.OK,
     };
     return result;
+  }
+
+  async getAllIds() {
+    const ids = (await this.favoritesRepository.find()).at(0);
+    return ids;
   }
 
   async getFavoritesInstanses(
@@ -87,10 +86,8 @@ export class FavoritesService {
     }
     if (candidateIdx >= 0 && isValid) {
       const newFavIdx = artists.at(candidateIdx).id;
-      const newFav = artists.at(candidateIdx);
 
       this.favoritesIds.artists.push(newFavIdx);
-      this.favoritesInstanses.artists.push(newFav);
 
       this.status = StatusCodes.CREATED;
     }
@@ -120,10 +117,8 @@ export class FavoritesService {
     }
     if (candidateIdx >= 0 && isValid) {
       const newFavIdx = tracks.at(candidateIdx).id;
-      const newFav = tracks.at(candidateIdx);
 
       this.favoritesIds.tracks.push(newFavIdx);
-      this.favoritesInstanses.tracks.push(newFav);
 
       this.status = StatusCodes.CREATED;
     }
@@ -153,10 +148,8 @@ export class FavoritesService {
     }
     if (candidateIdx >= 0 && isValid) {
       const newFavIdx = albums.at(candidateIdx).id;
-      const newFav = albums.at(candidateIdx);
 
       this.favoritesIds.albums.push(newFavIdx);
-      this.favoritesInstanses.albums.push(newFav);
 
       this.status = StatusCodes.CREATED;
     }
@@ -168,12 +161,14 @@ export class FavoritesService {
     return result;
   }
 
-  deleteArtistFromFavs(artistId: string) {
+  async deleteArtistFromFavs(artistId: string) {
     let message: string | null = null;
     const isValid = validate(artistId);
 
-    const candidateIdx = this.favoritesInstanses.artists.findIndex(
-      (artInArr) => artInArr.id === artistId,
+    const ids = await this.getAllIds();
+
+    const candidateIdx = ids.artists.findIndex(
+      (artIdInArr) => artIdInArr === artistId,
     );
 
     if (!isValid) {
@@ -186,7 +181,6 @@ export class FavoritesService {
     }
     if (candidateIdx >= 0 && isValid) {
       this.favoritesIds.artists.splice(candidateIdx, 1);
-      this.favoritesInstanses.artists.splice(candidateIdx, 1);
 
       this.status = StatusCodes.NO_CONTENT;
     }
@@ -198,12 +192,14 @@ export class FavoritesService {
     return result;
   }
 
-  deleteAlbumFromFavs(albumId: string) {
+  async deleteAlbumFromFavs(albumId: string) {
     let message: string | null = null;
     const isValid = validate(albumId);
 
-    const candidateIdx = this.favoritesInstanses.albums.findIndex(
-      (artInArr) => artInArr.id === albumId,
+    const ids = await this.getAllIds();
+
+    const candidateIdx = ids.artists.findIndex(
+      (albumIdInArr) => albumIdInArr === albumId,
     );
 
     if (!isValid) {
@@ -216,7 +212,6 @@ export class FavoritesService {
     }
     if (candidateIdx >= 0 && isValid) {
       this.favoritesIds.albums.splice(candidateIdx, 1);
-      this.favoritesInstanses.albums.splice(candidateIdx, 1);
 
       this.status = StatusCodes.NO_CONTENT;
     }
@@ -228,12 +223,14 @@ export class FavoritesService {
     return result;
   }
 
-  deleteTrackFromFavs(trackId: string) {
+  async deleteTrackFromFavs(trackId: string) {
     let message: string | null = null;
     const isValid = validate(trackId);
 
-    const candidateIdx = this.favoritesInstanses.tracks.findIndex(
-      (trackInArr) => trackInArr.id === trackId,
+    const ids = await this.getAllIds();
+
+    const candidateIdx = ids.artists.findIndex(
+      (trackIdInArr) => trackIdInArr === trackId,
     );
 
     if (!isValid) {
@@ -246,7 +243,6 @@ export class FavoritesService {
     }
     if (candidateIdx >= 0 && isValid) {
       this.favoritesIds.tracks.splice(candidateIdx, 1);
-      this.favoritesInstanses.tracks.splice(candidateIdx, 1);
 
       this.status = StatusCodes.NO_CONTENT;
     }
