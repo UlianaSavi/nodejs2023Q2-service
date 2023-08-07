@@ -27,7 +27,7 @@ npm start
 ### Start app with using Docker
 Create docker image:
 ```
-docker build -t <YOUR IMAGE NAME> .
+docker build -t <YOUR IMAGE NAME> . (exemple: docker build -t test-app .)
 ```
 
 Find created docker image `ID` (table where `IMAGE ID` - our `ID`):
