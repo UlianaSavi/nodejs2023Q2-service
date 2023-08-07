@@ -4,14 +4,12 @@ WORKDIR /src
 
 COPY package*.json ./
 
-RUN npm i
+RUN npm ci --only=production
 
 COPY . .
 
 ENV PORT=4000
 
 EXPOSE $PORT
-
-RUN npm run build
 
 CMD [ "node", "dist/main" ]
