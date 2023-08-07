@@ -35,7 +35,7 @@ Find created docker image `ID` (table where `IMAGE ID` - our `ID`):
 docker images
 ```
 
-Create container in image: (after this command app already run in container)
+Create container in image: (after this command app already run in container on `http://localhost:4000/api`)
 ```
 docker run -d -p 4000:4000 --restart=always <IMAGE ID>
 ```
