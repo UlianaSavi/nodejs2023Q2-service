@@ -121,7 +121,7 @@ Press <kbd>F5</kbd> to debug.
 For more information, visit: https://code.visualstudio.com/docs/editor/debugging
 
 
-### Information fot CROSSCHECK (#2):
+### Information for CROSSCHECK (#2):
 **RU**
 - Команды для запуска Docker указаны выше в нужной последовательности (для проверки можно смотреть все, что под загоовком "with Docker compose").
 - Чтобы проверить пункт "+20 Your built image is pushed to DockerHub" - запустите команду `docker pull ulianasavi/test-app`, а затем `docker images` - в списке images вы
