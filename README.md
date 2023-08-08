@@ -128,6 +128,9 @@ For more information, visit: https://code.visualstudio.com/docs/editor/debugging
 увидите экземпляр, взятый из моего репозитория DockerHub.
 - Чтобы проверить пункт "+10 Variables used for connection to database to be stored in `.env`" - зайдите в app.controller, там идет коннект с базой данных через typeorm и в `TypeOrmModule.forRoot` вы увидите, что все переменные вынесены как в `.env` файл и используются от туда, так и в константы для подстраховки. Далее в файле `docker-compose.yml`
 так же используются переменны из `.env`.
+- Для проверки пункта "+30 database files and logs to be stored in volumes instead of container" - после запуска мульти контейнеров по иструкции выше вы можете увидеть папку
+с именем `postgres-data` - в ней локально хранятся все логи и файлы базы данных. Так же этот пункт можно проверить зайдя в `docker-compose.yml` -  тут у базы данных есть поле
+`volumes` где как раз и указан путь к папке `postgres-data`.
 - Рекомендация 1: не создавайте слишком много контейнеров, тк все может полететь из-за нехватки памяти на компе.
 - Рекомендация 2:Так же если вы используете Docker с винды - нужно учитывать, что docker desktop должен быть запущен. Он частенько может вылетать и нуждаться в перезагрузке, поэтому
 если видите ошибку, попробуйте перезапустить docker desktop, почистить все существующие контейнеры и images, созданные в процессе кроссчек
@@ -139,6 +142,8 @@ For more information, visit: https://code.visualstudio.com/docs/editor/debugging
 will see an instance taken from my DockerHub repository.
 - To check the point "+10 Variables used for connection to database to be stored in `.env`" - go to app.controller, there is a connection to the database via typeorm and in   `TypeOrmModule.forRoot` you will see that all variables are rendered as in `.env` file and used from there, and in constants for safety. Also in `docker-compose.yml`
 you can see using of `.env` variables.
+- To check the point "+30 database files and logs to be stored in volumes instead of container" - after start multi containers according to the instructions above, you can see a folder named `postgres-data` - all logs and db files are stored locally in it. You can also check this item by going to `docker-compose.yml` - here the db has a field
+`volumes` where the path to the `postgresql-data` folder is specified.
 - Recommendation 1: do not create too many containers, because everything can fly due to lack of memory on the computer.
 - Recommendation 2: Also, if you use Docker from Windows, you need to take into account that docker desktop must be running. It can often crash and need to be restarted, so
 if you see an error, try restarting docker desktop, cleaning all existing containers and images created during the crosscheck process
