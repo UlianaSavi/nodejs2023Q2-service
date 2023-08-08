@@ -1,4 +1,9 @@
 export const SERVER_PORT = 4000;
+export const POSTGRES_PORT = 5432;
+export const POSTGRES_HOSTNAME = 'postgres';
+export const POSTGRES_USERNAME = 'postgres';
+export const POSTGRES_PASSWORD = 'root';
+export const DB_NAME = 'Node-js-server';
 
 export enum ROUTES {
   USER = '/user',

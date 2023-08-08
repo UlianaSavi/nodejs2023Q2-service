@@ -126,6 +126,8 @@ For more information, visit: https://code.visualstudio.com/docs/editor/debugging
 - Команды для запуска Docker указаны выше в нужной последовательности (для проверки можно смотреть все, что под загоовком "with Docker compose").
 - Чтобы проверить пункт "+20 Your built image is pushed to DockerHub" - запустите команду `docker pull ulianasavi/test-app`, а затем `docker images` - в списке images вы
 увидите экземпляр, взятый из моего репозитория DockerHub.
+- Чтобы проверить пункт "+10 Variables used for connection to database to be stored in `.env`" - зайдите в app.controller, там идет коннект с базой данных через typeorm и в `TypeOrmModule.forRoot` вы увидите, что все переменные вынесены как в `.env` файл и используются от туда, так и в константы для подстраховки. Далее в файле `docker-compose.yml`
+так же используются переменны из `.env`.
 - Рекомендация 1: не создавайте слишком много контейнеров, тк все может полететь из-за нехватки памяти на компе.
 - Рекомендация 2:Так же если вы используете Docker с винды - нужно учитывать, что docker desktop должен быть запущен. Он частенько может вылетать и нуждаться в перезагрузке, поэтому
 если видите ошибку, попробуйте перезапустить docker desktop, почистить все существующие контейнеры и images, созданные в процессе кроссчек
@@ -135,6 +137,8 @@ For more information, visit: https://code.visualstudio.com/docs/editor/debugging
 - The commands to run Docker are listed above in the correct sequence. (for crosscheck, you can look at everything under the heading "with Docker compose").
 - - To check the point "+20 Your build image is pushed to DockerHub" - run the command `docker pull ulianasavi/test-app`, and then `docker images` - in the images list you
 will see an instance taken from my DockerHub repository.
+- To check the point "+10 Variables used for connection to database to be stored in `.env`" - go to app.controller, there is a connection to the database via typeorm and in   `TypeOrmModule.forRoot` you will see that all variables are rendered as in `.env` file and used from there, and in constants for safety. Also in `docker-compose.yml`
+you can see using of `.env` variables.
 - Recommendation 1: do not create too many containers, because everything can fly due to lack of memory on the computer.
 - Recommendation 2: Also, if you use Docker from Windows, you need to take into account that docker desktop must be running. It can often crash and need to be restarted, so
 if you see an error, try restarting docker desktop, cleaning all existing containers and images created during the crosscheck process
