@@ -7,13 +7,13 @@ services:
       dockerfile: Dockerfile
     image: server
     container_name: server
-    restart: unless-stopped
+    restart: always
+    command: npm run start:dev
     env_file: .env
     environment:
       - PORT=$PORT
     ports:
       - "4000:4000"
-    command: node dist/main
   postgres:
       image: postgres:15.3
       environment:
@@ -22,3 +22,6 @@ services:
         POSTGRES_PASSWORD: "root"
       ports:
         - "5432:5432"
+      volumes:
+        - ./postgres-data:/var/lib/postgresql/data
+      restart: always

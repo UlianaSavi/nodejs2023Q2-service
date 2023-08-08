@@ -16,7 +16,7 @@ export enum METHODS {
 }
 
 export const HTML_START_PAGE = `
-<div style="width: 100%; height: 100%; background: #9e9e9e; display: flex;
+<div style="width: 100%; height: 100%; display: flex;
     background: radial-gradient(circle, rgba(255,196,222,1) 0%, rgba(255,255,255,0.3477766106442577) 63%);
     text-align: center;
     font-weight: 600;

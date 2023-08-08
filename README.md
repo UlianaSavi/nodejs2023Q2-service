@@ -24,7 +24,9 @@ npm install
 npm start
 ```
 
-### Start app with using Docker
+## Start app with using Docker
+
+### Single image:
 Create docker image:
 ```
 docker build -t <YOUR IMAGE NAME> . (exemple: docker build -t test-app .)
@@ -58,6 +60,16 @@ docker container prune
 Delete all images:
 ```
 docker image prune
+```
+
+### with Docker compose:
+1 step:
+```
+docker-compose build
+```
+2 step:
+```
+docker-compose up --build -V
 ```
 
 After starting the app on port (`4000` as default) you can open:
@@ -111,7 +123,7 @@ For more information, visit: https://code.visualstudio.com/docs/editor/debugging
 
 ### Information fot CROSSCHECK (#2):
 **RU**
-- Команды для запуска Docker указаны выше в нужной последовательности.
+- Команды для запуска Docker указаны выше в нужной последовательности (для проверки можно смотреть все, что под загоовком "with Docker compose").
 - Чтобы проверить пункт "+20 Your built image is pushed to DockerHub" - запустите команду `docker pull ulianasavi/test-app`, а затем `docker images` - в списке images вы
 увидите экземпляр, взятый из моего репозитория DockerHub.
 - Рекомендация 1: не создавайте слишком много контейнеров, тк все может полететь из-за нехватки памяти на компе.
@@ -120,7 +132,7 @@ For more information, visit: https://code.visualstudio.com/docs/editor/debugging
 и после этого заново пройтись по командам, указанным выше (создание и запуск контейнеров и т.д.)
 
 **EN**
-- The commands to run Docker are listed above in the correct sequence.
+- The commands to run Docker are listed above in the correct sequence. (for crosscheck, you can look at everything under the heading "with Docker compose").
 - - To check the point "+20 Your build image is pushed to DockerHub" - run the command `docker pull ulianasavi/test-app`, and then `docker images` - in the images list you
 will see an instance taken from my DockerHub repository.
 - Recommendation 1: do not create too many containers, because everything can fly due to lack of memory on the computer.
