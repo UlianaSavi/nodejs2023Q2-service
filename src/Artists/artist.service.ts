@@ -29,8 +29,6 @@ export class ArtistService {
     let candidate: IArtist | null = null;
     let message: string | null = null;
     const isValid = validate(id);
-    console.log('HERE id ----> ', id);
-    console.log('HERE isValid ----> ', isValid);
 
     try {
       candidate = await this.artistRepository.findOneBy({ id: id });

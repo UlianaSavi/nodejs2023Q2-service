@@ -16,7 +16,9 @@ services:
     ports:
       - $PORT:$PORT
     volumes:
-    - ./:/app
+    - ./:/src
+    networks:
+      - app-network
   postgres:
       image: postgres:15.3
       environment:
@@ -28,3 +30,8 @@ services:
       volumes:
         - ./postgres-data:/var/lib/postgresql/data
       restart: always
+      networks:
+      - app-network
+networks:
+  app-network:
+    name: app-network
