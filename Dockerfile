@@ -1,15 +1,17 @@
+# BUILD FOR DEVELOPMENT #
+
 FROM node:18.17.0-alpine As development
 
-WORKDIR /src
+WORKDIR /app
 
 COPY package*.json ./
 
 RUN npm install --only=development
 
+VOLUME ["./:/app"]
+
 COPY . .
 
 RUN npm run build
 
-ENV PORT=4000
-
-EXPOSE $PORT
+CMD [ "npm", "run", "start:dev" ]
