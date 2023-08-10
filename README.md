@@ -132,6 +132,7 @@ For more information, visit: https://code.visualstudio.com/docs/editor/debugging
 - Для проверки пункта "+30 database files and logs to be stored in volumes instead of container" - после запуска мульти контейнеров по инструкции выше вы можете увидеть папку
 с именем `postgres-data` - в ней локально хранятся все логи и файлы базы данных. Так же этот пункт можно проверить зайдя в `docker-compose.yml` -  тут у базы данных есть поле
 `volumes` где как раз и указан путь к папке `postgres-data`.
+- Для проверки пункта "+10 Implemented npm script for vulnerabilities scanning (free solution)" - запустите команду `npm run start:scan` - она соотв. запустит проверку на уязвимости и выведет их в консоль.
 - Рекомендация 1: не создавайте слишком много контейнеров, тк все может полететь из-за нехватки памяти на компе.
 - Рекомендация 2:Так же если вы используете Docker с винды - нужно учитывать, что docker desktop должен быть запущен. Он частенько может вылетать и нуждаться в перезагрузке, поэтому
 если видите ошибку, попробуйте перезапустить docker desktop, почистить все существующие контейнеры и images, созданные в процессе кроссчек
@@ -146,6 +147,7 @@ For more information, visit: https://code.visualstudio.com/docs/editor/debugging
 you can see using of `.env` variables.
 - To check the point "+30 database files and logs to be stored in volumes instead of container" - after start multi containers according to the instructions above, you can see a folder named `postgres-data` - all logs and db files are stored locally in it. You can also check this item by going to `docker-compose.yml` - here the db has a field
 `volumes` where the path to the `postgresql-data` folder is specified.
+- To check the item "+10 Implemented npmscript for vulnerabilities scanning (free solution)" - run the command `npm run start:scan` - it corresponds to it will run a vulnerability check and display them in the console.
 - Recommendation 1: do not create too many containers, because everything can fly due to lack of memory on the computer.
 - Recommendation 2: Also, if you use Docker from Windows, you need to take into account that docker desktop must be running. It can often crash and need to be restarted, so
 if you see an error, try restarting docker desktop, cleaning all existing containers and images created during the crosscheck process
