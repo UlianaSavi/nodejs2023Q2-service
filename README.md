@@ -125,8 +125,7 @@ For more information, visit: https://code.visualstudio.com/docs/editor/debugging
 **RU**
 - Команды для запуска Docker указаны выше в нужной последовательности (для проверки можно смотреть все, что под загоовком "with Docker compose").
 - Чтобы проверить пункт "+30 container auto restart after crash" - вы можете почитать инфу по этой ссылке и по ссылкам на статьи, указанные внизу страницы (https://serverfault.com/questions/884759/how-does-restart-always-policy-work-in-docker-compose). Еще можно зайти в `docker-compose.yml` и убедиться в наличии строки `restart: always`.
-- Чтобы проверить пункт "+20 Your build image is pushed to DockerHub" - При запуске команды из `Step 2` вы можете видеть там флаг `--build` - 
-это означает, что если локально у вас нет images - возьмется из репозитория, указанного в `docker-compose.yml` в поле image. Так же в ПР приложила скринот с запушенным репозиторием.
+- Чтобы проверить пункт "+20 Your build image is pushed to DockerHub" - При запуске команды из `Step 2` вы можете видеть там флаг `--build`. Так же в ПР приложила скринот с запушенным репозиторием. И вы можете запустить команду `docker pull ulianasavi/test-app:latest` - это спулит вам image с DockerHub
 - Чтобы проверить пункт "+10 Variables used for connection to database to be stored in `.env`" - зайдите в app.controller, там идет коннект с базой данных через typeorm и в `TypeOrmModule.forRoot` вы увидите, что все переменные вынесены как в `.env` файл и используются от туда, так и в константы для подстраховки. Далее в файле `docker-compose.yml`
 так же используются переменны из `.env`.
 - Для проверки пункта "+30 database files and logs to be stored in volumes instead of container" - после запуска мульти контейнеров по инструкции выше вы можете увидеть папку
@@ -141,8 +140,7 @@ For more information, visit: https://code.visualstudio.com/docs/editor/debugging
 **EN**
 - The commands to run Docker are listed above in the correct sequence. (for crosscheck, you can look at everything under the heading "with Docker compose").
 - Tto check the point "+30 container auto restart after crash" - you can read info at this link and at the links to the articles listed in the bottom of page (https://serverfault.com/questions/884759/how-does-restart-always-policy-work-in-docker-compose ). You can also go to `docker-compose.yml` and make sure there is a line `restart: always`.
-- To check the point "+20 Your build image is pushed to DockerHub" - When you run the command from `Step 2`, you can see the `--build` flag there -
-    this means that if you don't have images locally, it will be taken from the repository specified in `docker-compose.yml` in the image field. I also attached a screenshot with the repository running in the PR.
+- To check the item "+20 Your build image is pushed to Docker Pub" - When running the command from `Step 2` you can see the flag `--build` there. I also attached a screenshot with the pushed repository in the PR. And you can run the command `docker pull ulianasav/testapp:latest` - this pull you an image from DockerHub.
 - To check the point "+10 Variables used for connection to database to be stored in `.env`" - go to app.controller, there is a connection to the database via typeorm and in   `TypeOrmModule.forRoot` you will see that all variables are rendered as in `.env` file and used from there, and in constants for safety. Also in `docker-compose.yml`
 you can see using of `.env` variables.
 - To check the point "+30 database files and logs to be stored in volumes instead of container" - after start multi containers according to the instructions above, you can see a folder named `postgres-data` - all logs and db files are stored locally in it. You can also check this item by going to `docker-compose.yml` - here the db has a field
