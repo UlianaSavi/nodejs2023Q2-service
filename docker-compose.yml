@@ -4,7 +4,6 @@ services:
   server:
     build:
       context: .
-      target: development
       dockerfile: Dockerfile
     image: ulianasavi/test-app:latest
     container_name: server
@@ -17,6 +16,8 @@ services:
       - $PORT:$PORT
     volumes:
     - ./:/src
+    links:
+      - postgres
     networks:
       - app-network
   postgres:
