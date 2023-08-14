@@ -97,8 +97,6 @@ export class FavoritesService {
     let message: string | null = null;
     const isValid = validate(trackId);
 
-    // TODO: получить трек и привязать трек к favs
-
     const candidate = (await this.trackService.getById(trackId)).data as ITrack;
 
     if (!isValid) {
