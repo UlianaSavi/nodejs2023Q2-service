@@ -7,7 +7,11 @@ import { IAlbum } from 'src/Albums/album.model';
 import { ITrack } from 'src/Tracks/track.model';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { FavoritesIds } from './favorites.entity';
+import {
+  FavoriteAlbum,
+  FavoriteArtist,
+  FavoriteTrack,
+} from './favorites.entity';
 import { ArtistService } from 'src/Artists/artist.service';
 import { TrackService } from 'src/Tracks/track.service';
 import { AlbumService } from 'src/Albums/album.service';
@@ -15,8 +19,12 @@ import { AlbumService } from 'src/Albums/album.service';
 @Injectable()
 export class FavoritesService {
   constructor(
-    @InjectRepository(FavoritesIds)
-    private favoritesRepository: Repository<FavoritesIds>,
+    @InjectRepository(FavoriteAlbum)
+    private favoriteAlbumRepository: Repository<FavoriteAlbum>,
+    @InjectRepository(FavoriteArtist)
+    private favoriteArtistRepository: Repository<FavoriteArtist>,
+    @InjectRepository(FavoriteTrack)
+    private favoriteTrackRepository: Repository<FavoriteTrack>,
     private readonly artistService: ArtistService,
     private readonly albumService: AlbumService,
     private readonly trackService: TrackService,
@@ -24,37 +32,28 @@ export class FavoritesService {
   status: number | null = null;
 
   async getAll() {
-    const ids = await this.favoritesRepository.find({
+    const artists = await this.favoriteArtistRepository.find({
       relations: {
-        artirst: true,
+        artist: true,
+      },
+    });
+    const albums = await this.favoriteAlbumRepository.find({
+      relations: {
         album: true,
+      },
+    });
+    const tracks = await this.favoriteTrackRepository.find({
+      relations: {
         track: true,
       },
     });
+
     const result: IResponse = {
-      data: ids.reduce(
-        (acc, val) => {
-          const res = { ...acc };
-          if (val.artirst) {
-            res.artists.push(val.artirst);
-          }
-
-          if (val.album) {
-            res.albums.push(val.album);
-          }
-
-          if (val.track) {
-            res.tracks.push(val.track);
-          }
-
-          return res;
-        },
-        {
-          artists: [],
-          albums: [],
-          tracks: [],
-        },
-      ),
+      data: {
+        artists: artists.map((artist) => artist.artist),
+        albums: albums.map((album) => album.album),
+        tracks: tracks.map((track) => track.track),
+      },
       statusCode: StatusCodes.OK,
     };
     return result;
@@ -77,8 +76,8 @@ export class FavoritesService {
     }
     if (candidate && isValid) {
       try {
-        await this.favoritesRepository.insert({
-          artirst: () => candidate.id,
+        await this.favoriteArtistRepository.insert({
+          artist: () => candidate.id,
         });
         this.status = StatusCodes.CREATED;
       } catch (error) {
@@ -109,7 +108,7 @@ export class FavoritesService {
     }
     if (candidate && isValid) {
       try {
-        await this.favoritesRepository.insert({
+        await this.favoriteTrackRepository.insert({
           track: () => candidate.id,
         });
         this.status = StatusCodes.CREATED;
@@ -142,7 +141,7 @@ export class FavoritesService {
     }
     if (candidate && isValid) {
       try {
-        await this.favoritesRepository.insert({
+        await this.favoriteAlbumRepository.insert({
           album: () => candidate.id,
         });
         this.status = StatusCodes.CREATED;
@@ -179,18 +178,18 @@ export class FavoritesService {
       message = `Artist with id ${artistId} not found!`;
     }
     if (candidate && isValid) {
-      const artistsFavs = await this.favoritesRepository.find({
+      const artistsFavs = await this.favoriteArtistRepository.find({
         relations: {
-          artirst: true,
+          artist: true,
         },
       });
 
       const artistToDel = artistsFavs.find(
-        (favs) => favs.artirst.id === candidate.id,
+        (favs) => favs.artist.id === candidate.id,
       );
 
       try {
-        await this.favoritesRepository.remove(artistToDel);
+        await this.favoriteArtistRepository.remove(artistToDel);
         this.status = StatusCodes.NO_CONTENT;
       } catch (error) {
         message = 'Operation failed!';
@@ -225,7 +224,7 @@ export class FavoritesService {
       message = `Album with id ${albumId} not found!`;
     }
     if (candidate && isValid) {
-      const albumsFavs = await this.favoritesRepository.find({
+      const albumsFavs = await this.favoriteAlbumRepository.find({
         relations: {
           album: true,
         },
@@ -236,7 +235,7 @@ export class FavoritesService {
       );
 
       try {
-        await this.favoritesRepository.remove(albumToDel);
+        await this.favoriteAlbumRepository.remove(albumToDel);
         this.status = StatusCodes.NO_CONTENT;
       } catch (error) {
         message = 'Operation failed!';
@@ -271,7 +270,7 @@ export class FavoritesService {
       message = `Track with id ${trackId} not found!`;
     }
     if (candidate && isValid) {
-      const tracksFavs = await this.favoritesRepository.find({
+      const tracksFavs = await this.favoriteTrackRepository.find({
         relations: {
           track: true,
         },
@@ -282,7 +281,7 @@ export class FavoritesService {
       );
 
       try {
-        await this.favoritesRepository.remove(trackToDel);
+        await this.favoriteTrackRepository.remove(trackToDel);
         this.status = StatusCodes.NO_CONTENT;
       } catch (error) {
         message = 'Operation failed!';

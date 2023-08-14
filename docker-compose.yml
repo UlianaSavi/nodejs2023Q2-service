@@ -12,6 +12,7 @@ services:
     env_file: .env
     environment:
       - PORT=$PORT
+      - DOCKER_HOST=$POSTGRES_HOSTNAME
     ports:
       - $PORT:$PORT
     volumes:

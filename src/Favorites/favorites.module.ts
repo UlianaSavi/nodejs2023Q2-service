@@ -5,11 +5,17 @@ import { ArtistModule } from 'src/Artists/artist.module';
 import { AlbumModule } from 'src/Albums/album.module';
 import { TrackModule } from 'src/Tracks/track.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { FavoritesIds } from './favorites.entity';
+import {
+  FavoriteArtist,
+  FavoriteAlbum,
+  FavoriteTrack,
+} from './favorites.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([FavoritesIds]),
+    TypeOrmModule.forFeature([FavoriteArtist]),
+    TypeOrmModule.forFeature([FavoriteAlbum]),
+    TypeOrmModule.forFeature([FavoriteTrack]),
     forwardRef(() => TrackModule),
     forwardRef(() => AlbumModule),
     forwardRef(() => ArtistModule),

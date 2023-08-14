@@ -10,7 +10,7 @@ import { AuthModule } from './Auth/auth.module';
 import { AlbumModule } from './Albums/album.module';
 import {
   DB_NAME,
-  POSTGRES_HOSTNAME,
+  HOSTNAME,
   POSTGRES_PASSWORD,
   POSTGRES_PORT,
   POSTGRES_USERNAME,
@@ -18,7 +18,11 @@ import {
 import { Artist } from './Artists/artist.entity';
 import { Album } from './Albums/album.entity';
 import { Track } from './Tracks/track.entity';
-import { FavoritesIds } from './Favorites/favorites.entity';
+import {
+  FavoriteArtist,
+  FavoriteAlbum,
+  FavoriteTrack,
+} from './Favorites/favorites.entity';
 
 @Module({
   imports: [
@@ -30,13 +34,20 @@ import { FavoritesIds } from './Favorites/favorites.entity';
     AlbumModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: process.env.POSTGRES_HOSTNAME || POSTGRES_HOSTNAME,
+      host: process.env.DOCKER_HOST || HOSTNAME,
       port: +process.env.POSTGRES_PORT || POSTGRES_PORT,
       username: process.env.POSTGRES_USERNAME || POSTGRES_USERNAME,
       password: process.env.POSTGRES_PASSWORD || POSTGRES_PASSWORD,
       database: process.env.DB_NAME || DB_NAME,
-      entities: [Artist, Album, Track, FavoritesIds],
-      synchronize: false,
+      entities: [
+        Artist,
+        Album,
+        Track,
+        FavoriteArtist,
+        FavoriteAlbum,
+        FavoriteTrack,
+      ],
+      synchronize: true,
       autoLoadEntities: true,
     }),
   ],
