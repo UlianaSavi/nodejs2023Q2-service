@@ -1,4 +1,6 @@
-import { Entity, Column, PrimaryColumn } from 'typeorm';
+import { Album } from 'src/Albums/album.entity';
+import { Artist } from 'src/Artists/artist.entity';
+import { Entity, Column, JoinColumn, PrimaryColumn, OneToOne } from 'typeorm';
 
 @Entity()
 export class Track {
@@ -8,11 +10,13 @@ export class Track {
   @Column()
   name: string;
 
-  @Column()
-  artistId: string | null;
+  @OneToOne(() => Artist, { onDelete: 'CASCADE', orphanedRowAction: 'delete' })
+  @JoinColumn()
+  artist: Artist;
 
-  @Column()
-  albumId: string | null;
+  @OneToOne(() => Album, { onDelete: 'CASCADE', orphanedRowAction: 'delete' })
+  @JoinColumn()
+  album: Album;
 
   @Column()
   duration: number;

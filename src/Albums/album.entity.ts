@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryColumn } from 'typeorm';
+import { Artist } from 'src/Artists/artist.entity';
+import { Entity, JoinColumn, Column, PrimaryColumn, ManyToOne } from 'typeorm';
 
 @Entity()
 export class Album {
@@ -11,6 +12,7 @@ export class Album {
   @Column()
   year: number;
 
-  @Column()
-  artistId: string | null;
+  @ManyToOne(() => Artist, { onDelete: 'CASCADE', orphanedRowAction: 'delete' })
+  @JoinColumn()
+  artist: Artist;
 }

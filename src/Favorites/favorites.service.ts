@@ -37,6 +37,7 @@ export class FavoritesService {
         artist: true,
       },
     });
+    console.log('getAll artists', artists);
     const albums = await this.favoriteAlbumRepository.find({
       relations: {
         album: true,
@@ -47,7 +48,11 @@ export class FavoritesService {
         track: true,
       },
     });
-
+    console.log('GET ALL', {
+      artists,
+      albums,
+      tracks,
+    });
     const result: IResponse = {
       data: {
         artists: artists.map((artist) => artist.artist),
@@ -97,6 +102,7 @@ export class FavoritesService {
     const isValid = validate(trackId);
 
     const candidate = (await this.trackService.getById(trackId)).data as ITrack;
+    console.log(candidate);
 
     if (!isValid) {
       this.status = StatusCodes.BAD_REQUEST;
@@ -111,6 +117,8 @@ export class FavoritesService {
         await this.favoriteTrackRepository.insert({
           track: () => candidate.id,
         });
+        const get = await this.favoriteTrackRepository.find();
+        console.log(get);
         this.status = StatusCodes.CREATED;
       } catch (error) {
         message = 'Operation failed!';

@@ -63,8 +63,8 @@ export class TrackService {
       newTrack = {
         id: uuidv4(),
         name: dto.name,
-        artistId: dto.artistId,
-        albumId: dto.albumId,
+        artist: dto.artistId,
+        album: dto.albumId,
         duration: dto.duration,
       };
 
@@ -121,8 +121,8 @@ export class TrackService {
         id: candidate.id,
         name: dto.name,
         duration: dto.duration,
-        artistId: dto.artistId,
-        albumId: dto.albumId,
+        artist: dto.artistId,
+        album: dto.albumId,
       };
       try {
         await this.trackRepository.save(trackToUpdate);
@@ -167,8 +167,8 @@ export class TrackService {
       trackToUpdate = {
         id: candidate.id,
         name: dto.name,
-        artistId: dto.artistId,
-        albumId: dto.albumId,
+        artist: dto.artistId,
+        album: dto.albumId,
         duration: dto.duration,
       };
 

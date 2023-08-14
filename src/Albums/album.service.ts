@@ -67,7 +67,7 @@ export class AlbumService {
         id: uuidv4(),
         name: dto.name,
         year: dto.year,
-        artistId: dto.artistId,
+        artist: dto.artistId,
       };
 
       const res = await this.albumRepository.insert(newAlbum);
@@ -116,7 +116,7 @@ export class AlbumService {
         id: candidate.id,
         name: dto.name,
         year: dto.year,
-        artistId: dto.artistId,
+        artist: dto.artistId,
       };
       try {
         await this.albumRepository.save(albumToUpdate);

@@ -1,8 +1,10 @@
+import { Artist } from 'src/Artists/artist.entity';
+
 export interface IAlbum {
   id: string;
   name: string;
   year: number;
-  artistId: string | null;
+  artist: Artist;
 }
 export interface IAlbumDto {
   name: string;

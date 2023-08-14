@@ -8,7 +8,7 @@ export class FavoriteArtist {
   @PrimaryColumn()
   id: number;
 
-  @OneToOne(() => Artist)
+  @OneToOne(() => Artist, { onDelete: 'CASCADE', orphanedRowAction: 'delete' })
   @JoinColumn()
   artist: Artist;
 }
@@ -18,7 +18,7 @@ export class FavoriteAlbum {
   @PrimaryColumn()
   id: number;
 
-  @OneToOne(() => Album)
+  @OneToOne(() => Album, { onDelete: 'CASCADE', orphanedRowAction: 'delete' })
   @JoinColumn()
   album: Album;
 }
@@ -28,7 +28,7 @@ export class FavoriteTrack {
   @PrimaryColumn()
   id: number;
 
-  @OneToOne(() => Track)
+  @OneToOne(() => Track, { onDelete: 'CASCADE', orphanedRowAction: 'delete' })
   @JoinColumn()
   track: Track;
 }

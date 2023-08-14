@@ -1,8 +1,11 @@
+import { Album } from 'src/Albums/album.entity';
+import { Artist } from 'src/Artists/artist.entity';
+
 export interface ITrack {
   id: string;
   name: string;
-  artistId: string | null;
-  albumId: string | null;
+  artist: Artist;
+  album: Album;
   duration: number;
 }
 
