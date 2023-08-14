@@ -77,6 +77,24 @@ After starting the app on port (`4000` as default) you can open:
 - `http://localhost:4000/api/` - for see main page
 - `http://localhost:4000/doc/` OpenAPI documentation (For more information about OpenAPI/Swagger please visit `https://swagger.io/`.)
 
+### Migration:
+(instructions for migrations)
+
+**generate** migration from entities:
+```
+npm run typeorm -- -d ./src/typeOrm.config.ts migration:generate ./migrations/test
+```
+
+**create** empty migration:
+```
+npm run typeorm -- migration:create ./src/migrations/<MIGRATION NAME>
+```
+
+**run** migration:
+```
+npm run typeorm:run-migrations
+```
+
 ## Testing
 
 After application running open new terminal and enter:
@@ -135,6 +153,7 @@ For more information, visit: https://code.visualstudio.com/docs/editor/debugging
 - Для проверки пункта "+30 user-defined bridge is created and configured" - запустите все "with Docker compose" и затем введите во второй терминал команду `docker network ls`
 в появившейся таблице вы найдете помимо дефолтного моста кастомный. Скопируйте его имя и вызовете команду `docker inspect <NETWORK NAME>`. В появившемся массиве найдите поле 
 `"Containers"` - в этом объекте вы найдете информацию о контейнерах, между которыми шарится сеть. Там должен быть каки сервер, так и база данных. ("Name": "server" и "Name": "nodejs2023q2-service-postgres-1").
+- Для проверки пункта "Migrations are used to create database entities" - найдите в этом же файле readme.md заголовок "Migration" и следуйте инструкциям.
 - Рекомендация 0: При запуске в dev моде после сообщения от сервера `Found 0 errors. Watching for file changes.` часто сервер ОЧЕНЬ долго собирается или виснет (до 5 минут - нужно подождать, если дольше - значит упал, нужно все остановить, удалить и пересобрать). В таком случае нужно либо подождать минут 3-5, либо перезапустить все. Так же лучше для проверки работы тестов и тд выключать дев мод, тк он может упасть и завалить тесты (либо заставит долго ждать).
 - Рекомендация 1: не создавайте слишком много контейнеров, тк все может полететь из-за нехватки памяти на компе.
 - Рекомендация 2:Так же если вы используете Docker с винды - нужно учитывать, что docker desktop должен быть запущен. Он частенько может вылетать и нуждаться в перезагрузке, поэтому
@@ -144,15 +163,16 @@ For more information, visit: https://code.visualstudio.com/docs/editor/debugging
 **EN**
 - The commands to run Docker are listed above in the correct sequence. (for crosscheck, you can look at everything under the heading "with Docker compose").
 - Tto check the point "+30 container auto restart after crash" - you can read info at this link and at the links to the articles listed in the bottom of page (https://serverfault.com/questions/884759/how-does-restart-always-policy-work-in-docker-compose ). You can also go to `docker-compose.yml` and make sure there is a line `restart: always`.
-- To check the item "+20 Your build image is pushed to Docker Pub" - When running the command from `Step 2` you can see the flag `--build` there. I also attached a screenshot with the pushed repository in the PR. And you can run the command `docker pull ulianasav/testapp:latest` - this pull you an image from DockerHub.
+- To check the point "+20 Your build image is pushed to Docker Pub" - When running the command from `Step 2` you can see the flag `--build` there. I also attached a screenshot with the pushed repository in the PR. And you can run the command `docker pull ulianasav/testapp:latest` - this pull you an image from DockerHub.
 - To check the point "+10 Variables used for connection to database to be stored in `.env`" - go to app.controller, there is a connection to the database via typeorm and in   `TypeOrmModule.forRoot` you will see that all variables are rendered as in `.env` file and used from there, and in constants for safety. Also in `docker-compose.yml`
 you can see using of `.env` variables.
-- To check the item "+30 database files and logs to be stored in volumes instead of container" - This point can be checked by going to `docker-compose.yml` - here the database has a field
+- To check the point "+30 database files and logs to be stored in volumes instead of container" - This point can be checked by going to `docker-compose.yml` - here the database has a field
 `volumes`, just like the server has its own, all `volumes` are listed at the bottom of the same file.
-- To check the item "+10 Implemented npmscript for vulnerabilities scanning (free solution)" - run the command `npm run start:scan` - it corresponds to it will run a vulnerability check and display them in the console.
+- To check the point "+10 Implemented npmscript for vulnerabilities scanning (free solution)" - run the command `npm run start:scan` - it corresponds to it will run a vulnerability check and display them in the console.
 - To check the point "+30 user-defined bridge is created and configured" - do everything under "using Docker compose" title in README.md and then enter the command `docker network ls` into the second terminal.
 In the table that appears, you will find a custom bridge in addition to the default one. Copy it name and enter the command `docker inspect <NETWORK NAME>`. In the array that appears, find the field 
 `"Containers"` - here you will find info about the contaiыners between which the network is available. There should be both - a server and a database. ("Name": "server" and "Name": "nodejs2023q2-service-postgres-1").
+- To check the point "Migrations are used to create database entities" - find in the same file readme.md title "Migration" and follow the instructions.
 - Recommendation 0: When running in dev mode after a message from the server `Found 0 errors. Watching for file changes.` often the server takes a VERY long time to build or hangs (up to 5 minutes - need to wait, if longer - fell, you need to stop everything, delete and rebuild). In this case, you either need to wait 3-5 minutes, or restart everything. It is also better to turn off the dev mod to check the work of tests because it can fall and fail the tests (or make you wait a long time).
 - Recommendation 1: do not create too many containers, because everything can fly due to lack of memory on the computer.
 - Recommendation 2: Also, if you use Docker from Windows, you need to take into account that docker desktop must be running. It can often crash and need to be restarted, so

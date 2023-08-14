@@ -8,17 +8,17 @@ import { ArtistModule } from './Artists/artist.module';
 import { FavoritesModule } from './Favorites/favorites.module';
 import { AuthModule } from './Auth/auth.module';
 import { AlbumModule } from './Albums/album.module';
-import { Artist } from './Artists/artist.entity';
-import { Album } from './Albums/album.entity';
-import { Track } from './Tracks/track.entity';
-import { FavoritesIds } from './Favorites/favorites.entity';
 import {
   DB_NAME,
   POSTGRES_HOSTNAME,
   POSTGRES_PASSWORD,
   POSTGRES_PORT,
   POSTGRES_USERNAME,
-} from './constants';
+} from 'src/constants';
+import { Artist } from './Artists/artist.entity';
+import { Album } from './Albums/album.entity';
+import { Track } from './Tracks/track.entity';
+import { FavoritesIds } from './Favorites/favorites.entity';
 
 @Module({
   imports: [
@@ -36,7 +36,8 @@ import {
       password: process.env.POSTGRES_PASSWORD || POSTGRES_PASSWORD,
       database: process.env.DB_NAME || DB_NAME,
       entities: [Artist, Album, Track, FavoritesIds],
-      synchronize: true,
+      synchronize: false,
+      autoLoadEntities: true,
     }),
   ],
   controllers: [AppController],
