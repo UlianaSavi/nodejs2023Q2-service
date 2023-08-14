@@ -6,7 +6,7 @@ import { Entity, PrimaryColumn, OneToOne, JoinColumn } from 'typeorm';
 @Entity()
 export class FavoriteArtist {
   @PrimaryColumn()
-  id: number;
+  id: string;
 
   @OneToOne(() => Artist, { onDelete: 'CASCADE', orphanedRowAction: 'delete' })
   @JoinColumn()
@@ -16,7 +16,7 @@ export class FavoriteArtist {
 @Entity()
 export class FavoriteAlbum {
   @PrimaryColumn()
-  id: number;
+  id: string;
 
   @OneToOne(() => Album, { onDelete: 'CASCADE', orphanedRowAction: 'delete' })
   @JoinColumn()
@@ -26,7 +26,7 @@ export class FavoriteAlbum {
 @Entity()
 export class FavoriteTrack {
   @PrimaryColumn()
-  id: number;
+  id: string;
 
   @OneToOne(() => Track, { onDelete: 'CASCADE', orphanedRowAction: 'delete' })
   @JoinColumn()

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { IResponse } from 'src/models/response.model';
-import { validate } from 'uuid';
+import { v4 as uuidv4, validate } from 'uuid';
 import { StatusCodes } from 'http-status-codes';
 import { IArtist } from 'src/Artists/artist.model';
 import { IAlbum } from 'src/Albums/album.model';
@@ -37,7 +37,6 @@ export class FavoritesService {
         artist: true,
       },
     });
-    console.log('getAll artists', artists);
     const albums = await this.favoriteAlbumRepository.find({
       relations: {
         album: true,
@@ -47,11 +46,6 @@ export class FavoritesService {
       relations: {
         track: true,
       },
-    });
-    console.log('GET ALL', {
-      artists,
-      albums,
-      tracks,
     });
     const result: IResponse = {
       data: {
@@ -82,7 +76,8 @@ export class FavoritesService {
     if (candidate && isValid) {
       try {
         await this.favoriteArtistRepository.insert({
-          artist: () => candidate.id,
+          id: candidate.id,
+          artist: candidate,
         });
         this.status = StatusCodes.CREATED;
       } catch (error) {
@@ -102,7 +97,6 @@ export class FavoritesService {
     const isValid = validate(trackId);
 
     const candidate = (await this.trackService.getById(trackId)).data as ITrack;
-    console.log(candidate);
 
     if (!isValid) {
       this.status = StatusCodes.BAD_REQUEST;
@@ -115,13 +109,13 @@ export class FavoritesService {
     if (candidate && isValid) {
       try {
         await this.favoriteTrackRepository.insert({
-          track: () => candidate.id,
+          id: candidate.id,
+          track: candidate,
         });
-        const get = await this.favoriteTrackRepository.find();
-        console.log(get);
         this.status = StatusCodes.CREATED;
       } catch (error) {
         message = 'Operation failed!';
+        console.log(error?.message);
         this.status = StatusCodes.CONFLICT;
       }
     }
@@ -150,7 +144,8 @@ export class FavoritesService {
     if (candidate && isValid) {
       try {
         await this.favoriteAlbumRepository.insert({
-          album: () => candidate.id,
+          id: candidate.id,
+          album: candidate,
         });
         this.status = StatusCodes.CREATED;
       } catch (error) {
