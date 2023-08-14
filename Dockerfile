@@ -1,17 +1,25 @@
-FROM node:18.17.0
+FROM node:18.17.0-alpine as builder
 
 WORKDIR /src
 
 COPY package*.json ./
 
-RUN npm i
-
 COPY . .
 
-ENV PORT=4000
+RUN npm ci && npm run build
 
-EXPOSE $PORT
+FROM node:18.17.0-alpine
 
-RUN npm run build
+WORKDIR /src
 
-CMD [ "node", "dist/main" ]
+COPY package*.json ./
+
+RUN npm install --only=production
+
+COPY --from=builder /src/dist/ dist/
+
+VOLUME ["./:/src"]
+
+USER node
+
+ENTRYPOINT ["npm", "run", "start:dev"]
