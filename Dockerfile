@@ -18,8 +18,6 @@ RUN npm install --only=production
 
 COPY --from=builder /src/dist/ dist/
 
-VOLUME ["./:/src"]
-
 USER node
 
-ENTRYPOINT ["npm", "run", "start:dev"]
+ENTRYPOINT ["npm", "run", "start"]

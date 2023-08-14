@@ -63,6 +63,7 @@ docker image prune
 ```
 
 ### with Docker compose:
+**По дефолту прописан npm run start, для проверки работы dev мода добавьте в Dockerfile в CMD  вместо ["npm", "run", "start"] - ["npm", "run", "start:dev"] и в docker-compose.yml в поле command:  вместо npm run start - npm run start:dev. Так же при проверке работы dev мода нужно учесть его скорость, подробнее ниже, в рекомендации 0**
 1 step:
 ```
 docker-compose build
@@ -128,13 +129,13 @@ For more information, visit: https://code.visualstudio.com/docs/editor/debugging
 - Чтобы проверить пункт "+20 Your build image is pushed to DockerHub" - При запуске команды из `Step 2` вы можете видеть там флаг `--build`. Так же в ПР приложила скринот с запушенным репозиторием. И вы можете запустить команду `docker pull ulianasavi/test-app:latest` - это спулит вам image с DockerHub
 - Чтобы проверить пункт "+10 Variables used for connection to database to be stored in `.env`" - зайдите в app.controller, там идет коннект с базой данных через typeorm и в `TypeOrmModule.forRoot` вы увидите, что все переменные вынесены как в `.env` файл и используются от туда, так и в константы для подстраховки. Далее в файле `docker-compose.yml`
 так же используются переменны из `.env`.
-- Для проверки пункта "+30 database files and logs to be stored in volumes instead of container" - после запуска мульти контейнеров по инструкции выше вы можете увидеть папку
-с именем `postgres-data` - в ней локально хранятся все логи и файлы базы данных. Так же этот пункт можно проверить зайдя в `docker-compose.yml` -  тут у базы данных есть поле
-`volumes` где как раз и указан путь к папке `postgres-data`.
+- Для проверки пункта "+30 database files and logs to be stored in volumes instead of container" - Этот пункт можно проверить зайдя в `docker-compose.yml` -  тут у базы данных есть поле
+`volumes`, так же как и у сервера свой, все `volumes` указаны внизу того же файла.
 - Для проверки пункта "+10 Implemented npm script for vulnerabilities scanning (free solution)" - запустите команду `npm run start:scan` - она соотв. запустит проверку на уязвимости и выведет их в консоль.
 - Для проверки пункта "+30 user-defined bridge is created and configured" - запустите все "with Docker compose" и затем введите во второй терминал команду `docker network ls`
 в появившейся таблице вы найдете помимо дефолтного моста кастомный. Скопируйте его имя и вызовете команду `docker inspect <NETWORK NAME>`. В появившемся массиве найдите поле 
 `"Containers"` - в этом объекте вы найдете информацию о контейнерах, между которыми шарится сеть. Там должен быть каки сервер, так и база данных. ("Name": "server" и "Name": "nodejs2023q2-service-postgres-1").
+- Рекомендация 0: При запуске в dev моде после сообщения от сервера `Found 0 errors. Watching for file changes.` часто сервер ОЧЕНЬ долго собирается или виснет. В таком случае нужно либо подождать минут 3-5, либо перезапустить все. Так же лучше для проверки работы тестов и тд выключать дев мод, тк он может упасть и завалить тесты (либо заставит долго ждать).
 - Рекомендация 1: не создавайте слишком много контейнеров, тк все может полететь из-за нехватки памяти на компе.
 - Рекомендация 2:Так же если вы используете Docker с винды - нужно учитывать, что docker desktop должен быть запущен. Он частенько может вылетать и нуждаться в перезагрузке, поэтому
 если видите ошибку, попробуйте перезапустить docker desktop, почистить все существующие контейнеры и images, созданные в процессе кроссчек
@@ -146,12 +147,13 @@ For more information, visit: https://code.visualstudio.com/docs/editor/debugging
 - To check the item "+20 Your build image is pushed to Docker Pub" - When running the command from `Step 2` you can see the flag `--build` there. I also attached a screenshot with the pushed repository in the PR. And you can run the command `docker pull ulianasav/testapp:latest` - this pull you an image from DockerHub.
 - To check the point "+10 Variables used for connection to database to be stored in `.env`" - go to app.controller, there is a connection to the database via typeorm and in   `TypeOrmModule.forRoot` you will see that all variables are rendered as in `.env` file and used from there, and in constants for safety. Also in `docker-compose.yml`
 you can see using of `.env` variables.
-- To check the point "+30 database files and logs to be stored in volumes instead of container" - after start multi containers according to the instructions above, you can see a folder named `postgres-data` - all logs and db files are stored locally in it. You can also check this item by going to `docker-compose.yml` - here the db has a field
-`volumes` where the path to the `postgresql-data` folder is specified.
+- To check the item "+30 database files and logs to be stored in volumes instead of container" - This point can be checked by going to `docker-compose.yml` - here the database has a field
+`volumes`, just like the server has its own, all `volumes` are listed at the bottom of the same file.
 - To check the item "+10 Implemented npmscript for vulnerabilities scanning (free solution)" - run the command `npm run start:scan` - it corresponds to it will run a vulnerability check and display them in the console.
 - To check the point "+30 user-defined bridge is created and configured" - do everything under "using Docker compose" title in README.md and then enter the command `docker network ls` into the second terminal.
 In the table that appears, you will find a custom bridge in addition to the default one. Copy it name and enter the command `docker inspect <NETWORK NAME>`. In the array that appears, find the field 
 `"Containers"` - here you will find info about the contaiыners between which the network is available. There should be both - a server and a database. ("Name": "server" and "Name": "nodejs2023q2-service-postgres-1").
+- Recommendation 0: When running in dev mode after a message from the server `Found 0 errors. Watching for file changes.` often the server takes a VERY long time to build or hangs. In this case, you either need to wait 3-5 minutes, or restart everything. It is also better to turn off the dev mod to check the work of tests because it can fall and fail the tests (or make you wait a long time).
 - Recommendation 1: do not create too many containers, because everything can fly due to lack of memory on the computer.
 - Recommendation 2: Also, if you use Docker from Windows, you need to take into account that docker desktop must be running. It can often crash and need to be restarted, so
 if you see an error, try restarting docker desktop, cleaning all existing containers and images created during the crosscheck process
