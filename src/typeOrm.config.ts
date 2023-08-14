@@ -5,7 +5,7 @@ import {
   POSTGRES_PASSWORD,
   POSTGRES_PORT,
   POSTGRES_USERNAME,
-} from 'd:/УЛЯ/COURSE/nodejs2023Q2-service/src/constants';
+} from '../src/constants';
 
 const typeormOprions: DataSourceOptions = {
   type: 'postgres',
@@ -16,6 +16,7 @@ const typeormOprions: DataSourceOptions = {
   database: process.env.DB_NAME || DB_NAME,
   entities: ['**/*.entity.js'],
   migrations: ['migrations/*.js', 'migrations/*.ts'],
+  synchronize: false,
 };
 
 export default new DataSource(typeormOprions);

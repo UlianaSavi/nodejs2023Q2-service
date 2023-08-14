@@ -80,11 +80,9 @@ After starting the app on port (`4000` as default) you can open:
 ### Migration:
 (instructions for migrations)
 
-РУ В корне проекта вы можете видеть папку migrations - это миграция, созданная мной. Для быстрой проверки можно просто посмотреть в нее. Либо вы можете удалить ее, затем
-снегерировать заново и заранить:
+РУ Миграции должны запускаться на бд, на которой до этого их не было наче будет ошибка
 
-EN In the root of the project you can see the migrations folder - this is a migration created by me. For a quick check, you can just look into it. Or you can delete it, then
-generate migration again and run it:
+EN Migrations must be run on a database that did not have them before, otherwise there will be an error
 
 **generate** migration from entities:
 ```
