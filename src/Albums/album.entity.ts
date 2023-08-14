@@ -13,6 +13,7 @@ export class Album {
   year: number;
 
   @ManyToOne(() => Artist, {
+    eager: true,
     onDelete: 'SET NULL',
     orphanedRowAction: 'nullify',
     nullable: true,

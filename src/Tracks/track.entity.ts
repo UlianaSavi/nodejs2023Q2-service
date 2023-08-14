@@ -11,6 +11,7 @@ export class Track {
   name: string;
 
   @ManyToOne(() => Artist, {
+    eager: true,
     onDelete: 'SET NULL',
     orphanedRowAction: 'nullify',
     nullable: true,
@@ -19,6 +20,7 @@ export class Track {
   artist: Artist;
 
   @ManyToOne(() => Album, {
+    eager: true,
     onDelete: 'SET NULL',
     orphanedRowAction: 'nullify',
     nullable: true,
