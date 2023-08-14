@@ -80,14 +80,15 @@ After starting the app on port (`4000` as default) you can open:
 ### Migration:
 (instructions for migrations)
 
+РУ В корне проекта вы можете видеть папку migrations - это миграция, созданная мной. Для быстрой проверки можно просто посмотреть в нее. Либо вы можете удалить ее, затем
+снегерировать заново и заранить:
+
+EN In the root of the project you can see the migrations folder - this is a migration created by me. For a quick check, you can just look into it. Or you can delete it, then
+generate migration again and run it:
+
 **generate** migration from entities:
 ```
 npm run typeorm -- -d ./src/typeOrm.config.ts migration:generate ./migrations/test
-```
-
-**create** empty migration:
-```
-npm run typeorm -- migration:create ./src/migrations/<MIGRATION NAME>
 ```
 
 **run** migration:
