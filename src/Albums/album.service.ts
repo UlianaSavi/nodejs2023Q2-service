@@ -6,6 +6,7 @@ import { IAlbum, IAlbumDto } from './album.model';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Album } from './album.entity';
+import { Artist } from 'src/Artists/artist.entity';
 
 @Injectable()
 export class AlbumService {
@@ -14,6 +15,8 @@ export class AlbumService {
   constructor(
     @InjectRepository(Album)
     private albumRepository: Repository<Album>,
+    @InjectRepository(Artist)
+    private artistRepository: Repository<Artist>,
   ) {}
 
   async getAll() {
@@ -63,11 +66,14 @@ export class AlbumService {
       message = 'Incorrect data for operation!';
       this.status = StatusCodes.BAD_REQUEST;
     } else {
+      const artist = await this.artistRepository.findOneBy({
+        id: dto.artistId,
+      });
       newAlbum = {
         id: uuidv4(),
         name: dto.name,
         year: dto.year,
-        artist: dto.artistId,
+        artist,
       };
 
       const res = await this.albumRepository.insert(newAlbum);
@@ -135,7 +141,7 @@ export class AlbumService {
   }
 
   async deleteAlbum(id: string) {
-    let candidate: IAlbum | null = null;
+    let candidate: Album | null = null;
     let message: string | null = null;
     const isValid = validate(id);
 

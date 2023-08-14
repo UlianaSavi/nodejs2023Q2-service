@@ -6,6 +6,8 @@ import { ITrack, ITrackDto } from './track.model';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Track } from './track.entity';
 import { Repository } from 'typeorm';
+import { Album } from 'src/Albums/album.entity';
+import { Artist } from 'src/Artists/artist.entity';
 
 @Injectable()
 export class TrackService {
@@ -14,6 +16,10 @@ export class TrackService {
   constructor(
     @InjectRepository(Track)
     private trackRepository: Repository<Track>,
+    @InjectRepository(Album)
+    private albumRepository: Repository<Album>,
+    @InjectRepository(Artist)
+    private artistRepository: Repository<Artist>,
   ) {}
 
   async getAll() {
@@ -59,15 +65,17 @@ export class TrackService {
     let message: string | null = null;
     let newTrack: ITrack | null = null;
 
+    const album = await this.albumRepository.findOneBy({ id: dto.albumId });
+    const artist = await this.artistRepository.findOneBy({ id: dto.artistId });
+
     if (dto.name && dto.duration) {
       newTrack = {
         id: uuidv4(),
         name: dto.name,
-        artist: dto.artistId,
-        album: dto.albumId,
+        artist: artist,
+        album: album,
         duration: dto.duration,
       };
-
       const res = await this.trackRepository.insert(newTrack);
       if (res.identifiers.at(0)) {
         this.status = StatusCodes.CREATED;
@@ -188,7 +196,7 @@ export class TrackService {
   }
 
   async deleteTrack(id: string) {
-    let candidate: ITrack | null = null;
+    let candidate: Track | null = null;
     let message: string | null = null;
     const isValid = validate(id);
 

@@ -15,6 +15,7 @@ import {
 import { ArtistService } from 'src/Artists/artist.service';
 import { TrackService } from 'src/Tracks/track.service';
 import { AlbumService } from 'src/Albums/album.service';
+import { IFavoritesInstanses } from './favorites.model';
 
 @Injectable()
 export class FavoritesService {
@@ -39,22 +40,40 @@ export class FavoritesService {
     });
     const albums = await this.favoriteAlbumRepository.find({
       relations: {
-        album: true,
+        album: {
+          artist: true,
+        },
       },
     });
     const tracks = await this.favoriteTrackRepository.find({
       relations: {
-        track: true,
+        track: {
+          album: true,
+          artist: true,
+        },
       },
     });
+
     const result: IResponse = {
       data: {
         artists: artists.map((artist) => artist.artist),
-        albums: albums.map((album) => album.album),
-        tracks: tracks.map((track) => track.track),
+        albums: albums.map((album) => ({
+          name: album.album.name,
+          year: album.album.year,
+          id: album.album.id,
+          artistId: album.album.artist.id,
+        })),
+        tracks: tracks.map((track) => ({
+          id: track.track.id,
+          name: track.track.name,
+          duration: track.track.duration,
+          albumId: track.track.album.id,
+          artistId: track.track.artist.id,
+        })),
       },
       statusCode: StatusCodes.OK,
     };
+
     return result;
   }
 
@@ -76,7 +95,7 @@ export class FavoritesService {
     if (candidate && isValid) {
       try {
         await this.favoriteArtistRepository.insert({
-          id: candidate.id,
+          id: uuidv4(),
           artist: candidate,
         });
         this.status = StatusCodes.CREATED;
@@ -109,13 +128,12 @@ export class FavoritesService {
     if (candidate && isValid) {
       try {
         await this.favoriteTrackRepository.insert({
-          id: candidate.id,
+          id: uuidv4(),
           track: candidate,
         });
         this.status = StatusCodes.CREATED;
       } catch (error) {
         message = 'Operation failed!';
-        console.log(error?.message);
         this.status = StatusCodes.CONFLICT;
       }
     }
@@ -144,7 +162,7 @@ export class FavoritesService {
     if (candidate && isValid) {
       try {
         await this.favoriteAlbumRepository.insert({
-          id: candidate.id,
+          id: uuidv4(),
           album: candidate,
         });
         this.status = StatusCodes.CREATED;

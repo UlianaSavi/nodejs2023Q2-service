@@ -4,7 +4,8 @@ export interface IAlbum {
   id: string;
   name: string;
   year: number;
-  artist: Artist;
+  artist?: Artist;
+  artistId?: string;
 }
 export interface IAlbumDto {
   name: string;

@@ -4,10 +4,12 @@ import { TrackController } from './track.controller';
 import { TrackService } from './track.service';
 import { FavoritesModule } from 'src/Favorites/favorites.module';
 import { Track } from './track.entity';
+import { Album } from 'src/Albums/album.entity';
+import { Artist } from 'src/Artists/artist.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Track]),
+    TypeOrmModule.forFeature([Track, Album, Artist]),
     forwardRef(() => FavoritesModule),
   ],
   controllers: [TrackController],

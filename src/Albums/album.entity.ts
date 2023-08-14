@@ -12,7 +12,11 @@ export class Album {
   @Column()
   year: number;
 
-  @ManyToOne(() => Artist, { onDelete: 'CASCADE', orphanedRowAction: 'delete' })
+  @ManyToOne(() => Artist, {
+    onDelete: 'SET NULL',
+    orphanedRowAction: 'nullify',
+    nullable: true,
+  })
   @JoinColumn()
   artist: Artist;
 }

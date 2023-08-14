@@ -4,8 +4,10 @@ import { Artist } from 'src/Artists/artist.entity';
 export interface ITrack {
   id: string;
   name: string;
-  artist: Artist;
-  album: Album;
+  artist?: Artist;
+  artistId?: string;
+  album?: Album;
+  albumId?: string;
   duration: number;
 }
 
