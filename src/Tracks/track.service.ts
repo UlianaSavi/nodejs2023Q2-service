@@ -6,7 +6,6 @@ import { ITrack, ITrackDto } from './track.model';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Track } from './track.entity';
 import { Repository } from 'typeorm';
-import { IAlbum } from 'src/Albums/album.model';
 
 @Injectable()
 export class TrackService {
