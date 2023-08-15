@@ -1,0 +1,9 @@
+node_modules
+.git
+.code
+.idea
+Dockerfile
+postgres-data
+.code-workspace
+test
+README.md
