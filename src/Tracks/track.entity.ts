@@ -12,7 +12,8 @@ export class Track {
 
   @ManyToOne(() => Artist, {
     eager: true,
-    onDelete: 'SET NULL',
+    cascade: true,
+    onDelete: 'CASCADE',
     orphanedRowAction: 'nullify',
     nullable: true,
   })
@@ -21,7 +22,8 @@ export class Track {
 
   @ManyToOne(() => Album, {
     eager: true,
-    onDelete: 'SET NULL',
+    cascade: true,
+    onDelete: 'CASCADE',
     orphanedRowAction: 'nullify',
     nullable: true,
   })
@@ -30,4 +32,10 @@ export class Track {
 
   @Column()
   duration: number;
+
+  @Column({ nullable: true })
+  artistId?: string | null;
+
+  @Column({ nullable: true })
+  albumId?: string | null;
 }

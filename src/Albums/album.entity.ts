@@ -14,10 +14,14 @@ export class Album {
 
   @ManyToOne(() => Artist, {
     eager: true,
-    onDelete: 'SET NULL',
+    cascade: true,
+    onDelete: 'CASCADE',
     orphanedRowAction: 'nullify',
     nullable: true,
   })
   @JoinColumn()
   artist: Artist;
+
+  @Column({ nullable: true })
+  artistId?: string | null;
 }

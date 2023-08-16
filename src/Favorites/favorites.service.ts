@@ -15,7 +15,6 @@ import {
 import { ArtistService } from 'src/Artists/artist.service';
 import { TrackService } from 'src/Tracks/track.service';
 import { AlbumService } from 'src/Albums/album.service';
-import { IFavoritesInstanses } from './favorites.model';
 
 @Injectable()
 export class FavoritesService {
@@ -61,14 +60,14 @@ export class FavoritesService {
           name: album.album.name,
           year: album.album.year,
           id: album.album.id,
-          artistId: album.album.artist.id,
+          artistId: album.album.artist?.id || null,
         })),
         tracks: tracks.map((track) => ({
           id: track.track.id,
           name: track.track.name,
           duration: track.track.duration,
-          albumId: track.track.album.id,
-          artistId: track.track.artist.id,
+          albumId: track.track.album?.id || null,
+          artistId: track.track.artist?.id || null,
         })),
       },
       statusCode: StatusCodes.OK,
@@ -88,11 +87,11 @@ export class FavoritesService {
       this.status = StatusCodes.BAD_REQUEST;
       message = 'Invalid Id! (Not UUID type.)';
     }
-    if (!candidate && isValid) {
+    if (!candidate?.id && isValid) {
       this.status = StatusCodes.UNPROCESSABLE_ENTITY;
       message = `Artist with id ${artistId} not found!`;
     }
-    if (candidate && isValid) {
+    if (candidate?.id && isValid) {
       try {
         await this.favoriteArtistRepository.insert({
           id: uuidv4(),
@@ -121,11 +120,11 @@ export class FavoritesService {
       this.status = StatusCodes.BAD_REQUEST;
       message = 'Invalid Id! (Not UUID type.)';
     }
-    if (!candidate && isValid) {
+    if (!candidate?.id && isValid) {
       this.status = StatusCodes.UNPROCESSABLE_ENTITY;
       message = `Track with id ${trackId} not found!`;
     }
-    if (candidate && isValid) {
+    if (candidate?.id && isValid) {
       try {
         await this.favoriteTrackRepository.insert({
           id: uuidv4(),
@@ -155,11 +154,11 @@ export class FavoritesService {
       this.status = StatusCodes.BAD_REQUEST;
       message = 'Invalid Id! (Not UUID type.)';
     }
-    if (!candidate && isValid) {
+    if (!candidate?.id && isValid) {
       this.status = StatusCodes.UNPROCESSABLE_ENTITY;
       message = `Album with id ${albumId} not found!`;
     }
-    if (candidate && isValid) {
+    if (candidate?.id && isValid) {
       try {
         await this.favoriteAlbumRepository.insert({
           id: uuidv4(),
@@ -210,7 +209,7 @@ export class FavoritesService {
       );
 
       try {
-        await this.favoriteArtistRepository.remove(artistToDel);
+        await this.favoriteArtistRepository.delete(artistToDel);
         this.status = StatusCodes.NO_CONTENT;
       } catch (error) {
         message = 'Operation failed!';
@@ -256,7 +255,7 @@ export class FavoritesService {
       );
 
       try {
-        await this.favoriteAlbumRepository.remove(albumToDel);
+        await this.favoriteAlbumRepository.delete(albumToDel);
         this.status = StatusCodes.NO_CONTENT;
       } catch (error) {
         message = 'Operation failed!';
@@ -302,7 +301,7 @@ export class FavoritesService {
       );
 
       try {
-        await this.favoriteTrackRepository.remove(trackToDel);
+        await this.favoriteTrackRepository.delete(trackToDel);
         this.status = StatusCodes.NO_CONTENT;
       } catch (error) {
         message = 'Operation failed!';

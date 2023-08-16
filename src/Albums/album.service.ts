@@ -61,19 +61,23 @@ export class AlbumService {
   async createAlbum(dto: IAlbumDto) {
     let message: string | null = null;
     let newAlbum: IAlbum | null = null;
+    let artist: Artist | null = null;
 
     if (!dto?.name?.length || !dto?.year) {
       message = 'Incorrect data for operation!';
       this.status = StatusCodes.BAD_REQUEST;
     } else {
-      const artist = await this.artistRepository.findOneBy({
-        id: dto.artistId,
-      });
+      if (dto?.artistId) {
+        artist = await this.artistRepository.findOneBy({
+          id: dto.artistId,
+        });
+      }
       newAlbum = {
         id: uuidv4(),
         name: dto.name,
         year: dto.year,
         artist,
+        artistId: dto.artistId,
       };
 
       const res = await this.albumRepository.insert(newAlbum);
@@ -96,8 +100,14 @@ export class AlbumService {
   async updateAlbum(id: string, dto: IAlbumDto) {
     let message: string | null = null;
     let candidate: IAlbum | null = null;
-    let albumToUpdate: IAlbum | null = null;
+    let albumToUpdate: Album | null = null;
+    let artist: Artist | null = null;
+
     const isValid = validate(id);
+
+    if (dto?.artistId && validate(dto?.artistId)) {
+      artist = await this.artistRepository.findOneBy({ id: dto.artistId });
+    }
 
     try {
       candidate = await this.albumRepository.findOneBy({ id: id });
@@ -105,13 +115,13 @@ export class AlbumService {
       candidate = null;
     }
 
-    if (!candidate) {
-      message = `Album with id ${id} not found!`;
-      this.status = StatusCodes.NOT_FOUND;
-    }
     if (!isValid) {
       message = 'Invalid Id! (Not UUID type.)';
       this.status = StatusCodes.BAD_REQUEST;
+    }
+    if (!candidate && isValid) {
+      message = `Album with id ${id} not found!`;
+      this.status = StatusCodes.NOT_FOUND;
     }
     if (!dto?.name?.length || !dto?.year) {
       message = 'Invalid DTO!';
@@ -122,7 +132,8 @@ export class AlbumService {
         id: candidate.id,
         name: dto.name,
         year: dto.year,
-        artist: dto.artistId,
+        artist: artist,
+        artistId: dto.artistId,
       };
       try {
         await this.albumRepository.save(albumToUpdate);

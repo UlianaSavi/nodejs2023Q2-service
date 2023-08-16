@@ -46,12 +46,13 @@ export class TrackService {
       this.status = StatusCodes.BAD_REQUEST;
       message = 'Invalid Id! (Not UUID type.)';
     }
-    if (isValid && candidate) {
-      this.status = StatusCodes.OK;
-    }
     if (isValid && !candidate) {
       this.status = StatusCodes.NOT_FOUND;
       message = `Track with id ${id} - not found!`;
+    }
+    if (isValid && candidate) {
+      this.status = StatusCodes.OK;
+      message = null;
     }
 
     const result: IResponse = {
@@ -64,23 +65,31 @@ export class TrackService {
   async createTrack(dto: ITrackDto) {
     let message: string | null = null;
     let newTrack: ITrack | null = null;
+    let artist: Artist | null = null;
+    let album: Album | null = null;
 
-    const album = await this.albumRepository.findOneBy({ id: dto.albumId });
-    const artist = await this.artistRepository.findOneBy({ id: dto.artistId });
+    if (dto?.albumId && validate(dto?.albumId)) {
+      album = await this.albumRepository.findOneBy({ id: dto.albumId });
+    }
+    if (dto?.artistId && validate(dto?.artistId)) {
+      artist = await this.artistRepository.findOneBy({ id: dto.artistId });
+    }
 
-    if (dto.name && dto.duration) {
+    if (dto?.name && dto?.duration) {
       newTrack = {
         id: uuidv4(),
         name: dto.name,
         artist: artist,
         album: album,
         duration: dto.duration,
+        albumId: dto.albumId,
+        artistId: dto.artistId,
       };
-      const res = await this.trackRepository.insert(newTrack);
-      if (res.identifiers.at(0)) {
+      try {
+        await this.trackRepository.insert(newTrack);
         this.status = StatusCodes.CREATED;
         message = null;
-      } else {
+      } catch (error) {
         this.status = StatusCodes.FORBIDDEN;
         message = 'Operation failed!';
       }
@@ -96,10 +105,20 @@ export class TrackService {
   }
 
   async updateTrack(id: string, dto: ITrackDto) {
-    let candidate: ITrack | null = null;
-    let trackToUpdate: ITrack | null = null;
+    let candidate: Track | null = null;
+    let trackToUpdate: Track | null = null;
     let message: string | null = null;
+    let artist: Artist | null = null;
+    let album: Album | null = null;
+
     const isValid = validate(id);
+
+    if (dto?.albumId && validate(dto?.albumId)) {
+      album = await this.albumRepository.findOneBy({ id: dto.albumId });
+    }
+    if (dto?.artistId && validate(dto?.artistId)) {
+      artist = await this.artistRepository.findOneBy({ id: dto.artistId });
+    }
 
     try {
       candidate = await this.trackRepository.findOneBy({ id: id });
@@ -107,13 +126,13 @@ export class TrackService {
       candidate = null;
     }
 
-    if (!candidate) {
-      message = `Artist with id ${id} not found!`;
-      this.status = StatusCodes.NOT_FOUND;
-    }
     if (!isValid) {
       message = 'Invalid Id! (Not UUID type.)';
       this.status = StatusCodes.BAD_REQUEST;
+    }
+    if (!candidate && isValid) {
+      message = `Artist with id ${id} not found!`;
+      this.status = StatusCodes.NOT_FOUND;
     }
     if (!dto.name?.length || typeof dto?.duration !== 'number') {
       message = 'Invalid DTO!';
@@ -129,57 +148,11 @@ export class TrackService {
         id: candidate.id,
         name: dto.name,
         duration: dto.duration,
-        artist: dto.artistId,
-        album: dto.albumId,
+        artist: artist,
+        album: album,
+        artistId: dto.artistId,
+        albumId: dto.albumId,
       };
-      try {
-        await this.trackRepository.save(trackToUpdate);
-        this.status = StatusCodes.OK;
-      } catch (error) {
-        message = 'Operation failed!';
-      }
-    }
-
-    const result: IResponse = {
-      data: message ? message : trackToUpdate,
-      statusCode: this.status,
-    };
-    return result;
-  }
-
-  async updateTrackPassword(id: string, dto: ITrackDto) {
-    let message: string | null = null;
-    let candidate: ITrack | null = null;
-    let trackToUpdate: ITrack | null = null;
-    const isValid = validate(id);
-
-    try {
-      candidate = await this.trackRepository.findOneBy({ id: id });
-    } catch (error) {
-      candidate = null;
-    }
-
-    if (!candidate) {
-      message = `Track with id ${id} not found!`;
-      this.status = StatusCodes.NOT_FOUND;
-    }
-    if (!isValid) {
-      message = 'Invalid Id! (Not UUID type.)';
-      this.status = StatusCodes.BAD_REQUEST;
-    }
-    if (!dto.name || !dto.duration) {
-      message = 'Invalid DTO!';
-      this.status = StatusCodes.BAD_REQUEST;
-    }
-    if (isValid && dto?.duration && dto?.name && candidate) {
-      trackToUpdate = {
-        id: candidate.id,
-        name: dto.name,
-        artist: dto.artistId,
-        album: dto.albumId,
-        duration: dto.duration,
-      };
-
       try {
         await this.trackRepository.save(trackToUpdate);
         this.status = StatusCodes.OK;

@@ -84,8 +84,8 @@ export class ArtistService {
   }
 
   async updateArtist(id: string, dto: IArtistDto) {
-    let candidate: IArtist | null = null;
-    let artistToUpdate: IArtist | null = null;
+    let candidate: Artist | null = null;
+    let artistToUpdate: Artist | null = null;
     let message: string | null = null;
     const isValid = validate(id);
 
@@ -154,7 +154,7 @@ export class ArtistService {
     }
     if (isValid && candidate) {
       try {
-        await this.artistRepository.remove(candidate);
+        await this.artistRepository.delete(candidate);
         this.status = StatusCodes.NO_CONTENT;
       } catch (error) {
         message = 'Operation failed!';

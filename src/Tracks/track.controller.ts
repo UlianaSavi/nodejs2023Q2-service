@@ -43,7 +43,7 @@ export class TrackController {
     const { body, params } = req;
     const id = params.id;
 
-    const trackRes = await this.trackService.updateTrackPassword(id, body);
+    const trackRes = await this.trackService.updateTrack(id, body);
     res.status(trackRes.statusCode);
     res.send(trackRes.data);
   }
