@@ -15,7 +15,7 @@ export class Album {
   @ManyToOne(() => Artist, {
     eager: true,
     cascade: true,
-    onDelete: 'CASCADE',
+    onDelete: 'SET NULL',
     orphanedRowAction: 'nullify',
     nullable: true,
   })

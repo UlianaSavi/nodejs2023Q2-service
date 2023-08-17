@@ -13,7 +13,7 @@ export class Track {
   @ManyToOne(() => Artist, {
     eager: true,
     cascade: true,
-    onDelete: 'CASCADE',
+    onDelete: 'SET NULL',
     orphanedRowAction: 'nullify',
     nullable: true,
   })
@@ -23,7 +23,7 @@ export class Track {
   @ManyToOne(() => Album, {
     eager: true,
     cascade: true,
-    onDelete: 'CASCADE',
+    onDelete: 'SET NULL',
     orphanedRowAction: 'nullify',
     nullable: true,
   })

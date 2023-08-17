@@ -64,25 +64,31 @@ export class ArtistController {
       // set album.artistId to null after deletion artist
       const albumCandidate = (await this.albumService.getById(id))
         .data as IAlbum;
-      const albumDto = {
-        name: albumCandidate.name,
-        year: albumCandidate.year,
-        artistId: null,
-      };
 
-      await this.albumService.updateAlbum(id, albumDto);
+      if (albumCandidate?.id) {
+        const albumDto = {
+          name: albumCandidate.name,
+          year: albumCandidate.year,
+          artistId: null,
+        };
+
+        await this.albumService.updateAlbum(id, albumDto);
+      }
 
       // set track.artistId && track.albumId to null after deletion album or artist
       const trackCandidate = (await this.trackService.getById(id))
         .data as ITrack;
-      const trackDto = {
-        name: trackCandidate.name,
-        duration: trackCandidate.duration,
-        artistId: null,
-        albumId: null,
-      };
 
-      await this.trackService.updateTrack(id, trackDto);
+      if (trackCandidate?.id) {
+        const trackDto = {
+          name: trackCandidate.name,
+          duration: trackCandidate.duration,
+          artistId: null,
+          albumId: null,
+        };
+
+        await this.trackService.updateTrack(id, trackDto);
+      }
     }
 
     // delete deleted item also from favorites

@@ -29,7 +29,7 @@ export class AlbumService {
   }
 
   async getById(id: string) {
-    let candidate: IAlbum | null = null;
+    let candidate: Album | null = null;
     let message: string | null = null;
     const isValid = validate(id);
 
