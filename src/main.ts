@@ -11,6 +11,8 @@ async function bootstrap() {
 
   SwaggerModule.setup('doc', app, swaggerDocument);
 
+  // app.useLogger(app.get(CustomLoggerService));
+
   app.useGlobalFilters(new HttpExceptionFilter());
 
   await app.listen(+process.env.PORT || SERVER_PORT);

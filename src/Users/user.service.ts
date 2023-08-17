@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import {
   CreateUserDto,
   INewUserPesponse,
@@ -10,6 +10,7 @@ import { StatusCodes } from 'http-status-codes';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
+import { CustomLoggerService } from 'src/Logger/Logger.service';
 
 @Injectable()
 export class UserService {
@@ -18,6 +19,7 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    private readonly logger = new Logger(CustomLoggerService.name),
   ) {}
 
   async getAll() {
@@ -49,6 +51,10 @@ export class UserService {
     if (isValid && !candidate) {
       this.status = StatusCodes.NOT_FOUND;
       message = `User with id ${id} - not found!`;
+    }
+
+    if (message) {
+      this.logger.log(message);
     }
 
     const result: IResponse = {
@@ -97,6 +103,11 @@ export class UserService {
         updatedAt: newUser.updatedAt,
       };
     }
+
+    if (message) {
+      this.logger.log(message);
+    }
+
     const result: IResponse = {
       data: message ? message : userWithoutPassword,
       statusCode: this.status,
@@ -158,6 +169,10 @@ export class UserService {
       this.status = StatusCodes.OK;
     }
 
+    if (message) {
+      this.logger.log(message);
+    }
+
     const result: IResponse = {
       data: message ? message : userWithoutPassword,
       statusCode: this.status,
@@ -191,6 +206,10 @@ export class UserService {
       } catch (error) {
         message = 'Operation failed!';
       }
+    }
+
+    if (message) {
+      this.logger.log(message);
     }
 
     const updatedArr = (await this.getAll()).data;
