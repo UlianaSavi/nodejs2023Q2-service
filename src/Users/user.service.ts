@@ -2,30 +2,43 @@ import { Injectable } from '@nestjs/common';
 import {
   CreateUserDto,
   INewUserPesponse,
-  IUser,
   UpdatePasswordDto,
 } from './user.model';
 import { v4 as uuidv4, validate } from 'uuid';
 import { IResponse } from 'src/models/response.model';
 import { StatusCodes } from 'http-status-codes';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { User } from './user.entity';
 
 @Injectable()
 export class UserService {
-  users: IUser[] = [];
   status: number | null = null;
 
-  getAll() {
-    const result: IResponse = { data: this.users, statusCode: StatusCodes.OK };
+  constructor(
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+  ) {}
+
+  async getAll() {
+    const users = await this.userRepository.find();
+    const result: IResponse = {
+      data: users.at(0) ? users : [],
+      statusCode: StatusCodes.OK,
+    };
     return result;
   }
 
-  getById(id: string) {
-    let candidate: IUser | null = null;
+  async getById(id: string) {
+    let candidate: User | null = null;
     let message: string | null = null;
     const isValid = validate(id);
 
-    candidate = this.users.find((userInDb) => userInDb.id === id);
-
+    try {
+      candidate = await this.userRepository.findOneBy({ id: id });
+    } catch (error) {
+      candidate = null;
+    }
     if (!isValid) {
       this.status = StatusCodes.BAD_REQUEST;
       message = 'Invalid Id! (Not UUID type.)';
@@ -34,7 +47,6 @@ export class UserService {
       this.status = StatusCodes.OK;
     }
     if (isValid && !candidate) {
-      candidate = null;
       this.status = StatusCodes.NOT_FOUND;
       message = `User with id ${id} - not found!`;
     }
@@ -46,9 +58,9 @@ export class UserService {
     return result;
   }
 
-  createUser(dto: CreateUserDto) {
+  async createUser(dto: CreateUserDto) {
     let message: string | null = null;
-    let newUser: IUser | null = null;
+    let newUser: User | null = null;
     let userWithoutPassword: INewUserPesponse | null = null;
 
     if (dto.login && dto.password) {
@@ -57,13 +69,20 @@ export class UserService {
         login: `${dto.login}`,
         password: `${dto.password}`,
         version: 1,
-        createdAt: new Date().getTime(),
-        updatedAt: new Date().getTime(),
+        createdAt: Math.floor(new Date().getTime() / 1000),
+        updatedAt: Math.floor(new Date().getTime() / 1000),
       };
 
       this.status = StatusCodes.CREATED;
 
-      this.users.push(newUser);
+      const res = await this.userRepository.insert(newUser);
+      if (res.identifiers.at(0)) {
+        this.status = StatusCodes.CREATED;
+        message = null;
+      } else {
+        this.status = StatusCodes.FORBIDDEN;
+        message = 'Operation failed!';
+      }
     } else {
       message = 'Incorrect data for operation!';
       this.status = StatusCodes.BAD_REQUEST;
@@ -85,30 +104,36 @@ export class UserService {
     return result;
   }
 
-  updateUserPassword(id: string, dto: UpdatePasswordDto) {
+  async updateUserPassword(id: string, dto: UpdatePasswordDto) {
     let message: string | null = null;
+    let userToUpdate: User | null = null;
     let userWithoutPassword: INewUserPesponse | null = null;
     const isValid = validate(id);
 
-    const userToUpdateIdx = this.users.findIndex(
-      (userInDb) => userInDb.id === id,
-    );
-    const isValidOldPassword =
-      this.users.at(userToUpdateIdx)?.password === dto?.oldPassword;
+    try {
+      userToUpdate = await this.userRepository.findOneBy({ id: id });
+    } catch (error) {
+      userToUpdate = null;
+    }
+    const isValidOldPassword = userToUpdate?.password === dto?.oldPassword;
 
-    if (!this.users.at(userToUpdateIdx)) {
+    if (!userToUpdate) {
+      console.log('here 222');
       message = `User with id ${id} not found!`;
       this.status = StatusCodes.NOT_FOUND;
     }
-    if (!dto?.newPassword || !dto?.oldPassword) {
-      message = 'Invalid DTO!';
-      this.status = StatusCodes.BAD_REQUEST;
-    }
     if (!isValid) {
+      console.log('here 111');
       message = 'Invalid Id! (Not UUID type.)';
       this.status = StatusCodes.BAD_REQUEST;
     }
-    if (isValid && this.users.at(userToUpdateIdx) && !isValidOldPassword) {
+    if (!dto?.newPassword || !dto?.oldPassword) {
+      console.log('here 444');
+      message = 'Invalid DTO!';
+      this.status = StatusCodes.BAD_REQUEST;
+    }
+    if (isValid && !!userToUpdate && !isValidOldPassword) {
+      console.log('here 333');
       message = 'Wrong old password!';
       this.status = StatusCodes.FORBIDDEN;
     }
@@ -117,18 +142,17 @@ export class UserService {
       dto.oldPassword &&
       isValid &&
       isValidOldPassword &&
-      this.users.at(userToUpdateIdx)
+      userToUpdate?.id
     ) {
-      this.users.at(userToUpdateIdx).password = dto.newPassword;
-      this.users.at(userToUpdateIdx).version =
-        this.users.at(userToUpdateIdx).version + 1;
-      this.users.at(userToUpdateIdx).updatedAt = new Date().getTime();
+      userToUpdate.password = dto.newPassword;
+      userToUpdate.version = userToUpdate.version + 1;
+      userToUpdate.updatedAt = Math.floor(new Date().getTime() / 1000) + 1;
       userWithoutPassword = {
-        id: this.users.at(userToUpdateIdx).id,
-        login: this.users.at(userToUpdateIdx).login,
-        version: this.users.at(userToUpdateIdx).version,
-        createdAt: this.users.at(userToUpdateIdx).createdAt,
-        updatedAt: this.users.at(userToUpdateIdx).updatedAt,
+        id: userToUpdate.id,
+        login: userToUpdate.login,
+        version: userToUpdate.version,
+        createdAt: userToUpdate.createdAt,
+        updatedAt: userToUpdate.updatedAt,
       };
 
       this.status = StatusCodes.OK;
@@ -141,11 +165,16 @@ export class UserService {
     return result;
   }
 
-  deleteUser(id: string) {
+  async deleteUser(id: string) {
     let message: string | null = null;
+    let candidate: User | null = null;
     const isValid = validate(id);
 
-    const candidate = this.users.find((user) => user.id === id);
+    try {
+      candidate = await this.userRepository.findOneBy({ id: id });
+    } catch (error) {
+      candidate = null;
+    }
 
     if (!isValid) {
       message = 'Invalid Id! (Not UUID type.)';
@@ -156,12 +185,18 @@ export class UserService {
       this.status = StatusCodes.NOT_FOUND;
     }
     if (isValid && candidate) {
-      const res = this.users.filter((userInDb) => userInDb.id !== id);
-      this.users = res;
-      this.status = StatusCodes.NO_CONTENT;
+      try {
+        await this.userRepository.remove(candidate);
+        this.status = StatusCodes.NO_CONTENT;
+      } catch (error) {
+        message = 'Operation failed!';
+      }
     }
+
+    const updatedArr = (await this.getAll()).data;
+
     const result: IResponse = {
-      data: message ? message : this.users,
+      data: message ? message : updatedArr,
       statusCode: this.status,
     };
     return result;
