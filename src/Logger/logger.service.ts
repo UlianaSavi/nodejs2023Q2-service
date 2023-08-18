@@ -16,7 +16,7 @@ export class CustomLoggerService extends ConsoleLogger {
   async writeLogToFile(message: string) {
     const file = createWriteStream(join(process.cwd(), 'src/Logger/logs/errors.logs.txt'), { flags: 'a'});
     try {
-      file.write(message);
+      file.write(`${message}\n`);
     } catch (err) {
       console.log('Error in logger: ', err?.message);
     }
