@@ -8,6 +8,7 @@ import { ArtistModule } from './Artists/artist.module';
 import { FavoritesModule } from './Favorites/favorites.module';
 import { AuthModule } from './Auth/auth.module';
 import { AlbumModule } from './Albums/album.module';
+import { LoggerModule } from './Logger/logger.module';
 import {
   DB_NAME,
   HOSTNAME,
@@ -32,6 +33,7 @@ import {
     FavoritesModule,
     AuthModule,
     AlbumModule,
+    LoggerModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DOCKER_HOST || HOSTNAME,

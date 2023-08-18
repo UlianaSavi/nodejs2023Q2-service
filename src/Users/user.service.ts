@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import {
   CreateUserDto,
   INewUserPesponse,
@@ -9,8 +9,8 @@ import { IResponse } from 'src/models/response.model';
 import { StatusCodes } from 'http-status-codes';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { CustomLoggerService } from 'src/Logger/logger.service';
 import { User } from './user.entity';
-import { CustomLoggerService } from 'src/Logger/Logger.service';
 
 @Injectable()
 export class UserService {
@@ -19,8 +19,10 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
-    private readonly logger = new Logger(CustomLoggerService.name),
-  ) {}
+    private logger: CustomLoggerService,
+  ) {
+    this.logger.setContext('UserService');
+  }
 
   async getAll() {
     const users = await this.userRepository.find();
@@ -54,7 +56,7 @@ export class UserService {
     }
 
     if (message) {
-      this.logger.log(message);
+      this.logger.error(message);
     }
 
     const result: IResponse = {
@@ -105,7 +107,7 @@ export class UserService {
     }
 
     if (message) {
-      this.logger.log(message);
+      this.logger.error(message);
     }
 
     const result: IResponse = {
@@ -129,22 +131,18 @@ export class UserService {
     const isValidOldPassword = userToUpdate?.password === dto?.oldPassword;
 
     if (!userToUpdate) {
-      console.log('here 222');
       message = `User with id ${id} not found!`;
       this.status = StatusCodes.NOT_FOUND;
     }
     if (!isValid) {
-      console.log('here 111');
       message = 'Invalid Id! (Not UUID type.)';
       this.status = StatusCodes.BAD_REQUEST;
     }
     if (!dto?.newPassword || !dto?.oldPassword) {
-      console.log('here 444');
       message = 'Invalid DTO!';
       this.status = StatusCodes.BAD_REQUEST;
     }
     if (isValid && !!userToUpdate && !isValidOldPassword) {
-      console.log('here 333');
       message = 'Wrong old password!';
       this.status = StatusCodes.FORBIDDEN;
     }
@@ -170,7 +168,7 @@ export class UserService {
     }
 
     if (message) {
-      this.logger.log(message);
+      this.logger.error(message);
     }
 
     const result: IResponse = {
@@ -209,7 +207,7 @@ export class UserService {
     }
 
     if (message) {
-      this.logger.log(message);
+      this.logger.error(message);
     }
 
     const updatedArr = (await this.getAll()).data;
