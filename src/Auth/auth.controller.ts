@@ -1,10 +1,8 @@
-import { Controller, Post, Req, Res, UseFilters } from '@nestjs/common';
+import { Controller, Post, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { AuthService } from './auth.servise';
-import { HttpExceptionFilter } from 'src/utils/exception.filter';
 
 @Controller('api')
-@UseFilters(new HttpExceptionFilter())
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
