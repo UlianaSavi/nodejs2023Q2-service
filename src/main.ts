@@ -12,10 +12,10 @@ async function bootstrap() {
   });
   app.useLogger(new CustomLoggerService());
 
+  app.useGlobalFilters(new HttpExceptionFilter());
+
   const swaggerDocument = yaml.load('doc/api.yaml');
   SwaggerModule.setup('doc', app, swaggerDocument);
-
-  app.useGlobalFilters(new HttpExceptionFilter());
 
   await app.listen(+process.env.PORT || SERVER_PORT);
 }
