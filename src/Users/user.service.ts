@@ -56,7 +56,7 @@ export class UserService {
     }
 
     if (message) {
-      this.logger.error(message);
+      this.logger.error(message, 'UserService');
     }
 
     const result: IResponse = {
@@ -107,7 +107,7 @@ export class UserService {
     }
 
     if (message) {
-      this.logger.error(message);
+      this.logger.error(message, 'UserService');
     }
 
     const result: IResponse = {
@@ -168,7 +168,7 @@ export class UserService {
     }
 
     if (message) {
-      this.logger.error(message);
+      this.logger.error(message, 'UserService');
     }
 
     const result: IResponse = {
@@ -207,7 +207,7 @@ export class UserService {
     }
 
     if (message) {
-      this.logger.error(message);
+      this.logger.error(message, 'UserService');
     }
 
     const updatedArr = (await this.getAll()).data;

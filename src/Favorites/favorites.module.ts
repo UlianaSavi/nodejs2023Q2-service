@@ -10,12 +10,14 @@ import {
   FavoriteAlbum,
   FavoriteTrack,
 } from './favorites.entity';
+import { LoggerModule } from 'src/Logger/logger.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([FavoriteArtist]),
     TypeOrmModule.forFeature([FavoriteAlbum]),
     TypeOrmModule.forFeature([FavoriteTrack]),
+    LoggerModule,
     forwardRef(() => TrackModule),
     forwardRef(() => AlbumModule),
     forwardRef(() => ArtistModule),

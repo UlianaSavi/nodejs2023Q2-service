@@ -8,6 +8,7 @@ import { Track } from './track.entity';
 import { Repository } from 'typeorm';
 import { Album } from 'src/Albums/album.entity';
 import { Artist } from 'src/Artists/artist.entity';
+import { CustomLoggerService } from 'src/Logger/logger.service';
 
 @Injectable()
 export class TrackService {
@@ -20,7 +21,10 @@ export class TrackService {
     private albumRepository: Repository<Album>,
     @InjectRepository(Artist)
     private artistRepository: Repository<Artist>,
-  ) {}
+    private logger: CustomLoggerService,
+  ) {
+    this.logger.setContext('TrackService');
+  }
 
   async getAll() {
     const tracks = await this.trackRepository.find();
@@ -53,6 +57,10 @@ export class TrackService {
     if (isValid && candidate) {
       this.status = StatusCodes.OK;
       message = null;
+    }
+
+    if (message) {
+      this.logger.error(message, 'TrackService');
     }
 
     const result: IResponse = {
@@ -97,6 +105,11 @@ export class TrackService {
       message = 'Incorrect data for operation!';
       this.status = StatusCodes.BAD_REQUEST;
     }
+
+    if (message) {
+      this.logger.error(message, 'TrackService');
+    }
+
     const result: IResponse = {
       data: message ? message : newTrack,
       statusCode: this.status,
@@ -156,9 +169,14 @@ export class TrackService {
       try {
         await this.trackRepository.save(trackToUpdate);
         this.status = StatusCodes.OK;
+        message = null;
       } catch (error) {
         message = 'Operation failed!';
       }
+    }
+
+    if (message) {
+      this.logger.error(message, 'TrackService');
     }
 
     const result: IResponse = {
@@ -191,9 +209,14 @@ export class TrackService {
       try {
         await this.trackRepository.remove(candidate);
         this.status = StatusCodes.NO_CONTENT;
+        message = null;
       } catch (error) {
         message = 'Operation failed!';
       }
+    }
+
+    if (message) {
+      this.logger.error(message, 'TrackService');
     }
 
     const updatedArr = (await this.getAll()).data;

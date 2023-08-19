@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Album } from './album.entity';
 import { Artist } from 'src/Artists/artist.entity';
+import { CustomLoggerService } from 'src/Logger/logger.service';
 
 @Injectable()
 export class AlbumService {
@@ -17,7 +18,10 @@ export class AlbumService {
     private albumRepository: Repository<Album>,
     @InjectRepository(Artist)
     private artistRepository: Repository<Artist>,
-  ) {}
+    private logger: CustomLoggerService,
+  ) {
+    this.logger.setContext('AlbumService');
+  }
 
   async getAll() {
     const albums = await this.albumRepository.find();
@@ -45,10 +49,15 @@ export class AlbumService {
     }
     if (isValid && candidate) {
       this.status = StatusCodes.OK;
+      message = null;
     }
     if (isValid && !candidate) {
       this.status = StatusCodes.NOT_FOUND;
       message = `Album with id ${id} - not found!`;
+    }
+
+    if (message) {
+      this.logger.error(message, 'AlbumService');
     }
 
     const result: IResponse = {
@@ -90,6 +99,11 @@ export class AlbumService {
         message = 'Operation failed!';
       }
     }
+
+    if (message) {
+      this.logger.error(message, 'AlbumService');
+    }
+
     const result: IResponse = {
       data: message ? message : newAlbum,
       statusCode: this.status,
@@ -142,6 +156,11 @@ export class AlbumService {
         message = 'Operation failed!';
       }
       this.status = StatusCodes.OK;
+      message = null;
+    }
+
+    if (message) {
+      this.logger.error(message, 'AlbumService');
     }
 
     const result: IResponse = {
@@ -173,10 +192,14 @@ export class AlbumService {
     if (isValid && candidate) {
       await this.albumRepository.remove(candidate);
       this.status = StatusCodes.NO_CONTENT;
+      message = null;
+    }
+
+    if (message) {
+      this.logger.error(message, 'AlbumService');
     }
 
     const updatedArr = (await this.getAll()).data;
-
     const result: IResponse = {
       data: message ? message : updatedArr,
       statusCode: this.status,

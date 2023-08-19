@@ -6,10 +6,12 @@ import { FavoritesModule } from 'src/Favorites/favorites.module';
 import { Track } from './track.entity';
 import { Album } from 'src/Albums/album.entity';
 import { Artist } from 'src/Artists/artist.entity';
+import { LoggerModule } from 'src/Logger/logger.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Track, Album, Artist]),
+    LoggerModule,
     forwardRef(() => FavoritesModule),
   ],
   controllers: [TrackController],

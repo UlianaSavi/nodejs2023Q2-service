@@ -23,21 +23,22 @@ export class CustomLoggerService extends ConsoleLogger {
     }
   }
 
-  async writeLogToFile(message: string) {
+  async writeLogToFile(message: string, context: string) {
     const file = createWriteStream(
-      // TODO: проверить, что если папки и/или файла под логи нет - нет и ошибки, а просто создается нужная папка и/или файл
       join(process.cwd(), 'src/Logger/logs/errors.log'),
       { flags: 'a' },
     );
     try {
-      file.write(`Message: ${message} ----- Time: ${new Date().getTime()}\n`);
+      const chunk = `Message: ${message} ----- Time: ${new Date().getTime()} ----- Context: ${context}\n`;
+      file.write(chunk);
+      return chunk;
     } catch (err) {
       console.log('Error in logger: ', err?.message);
     }
   }
 
-  async error(message: string) {
-    await this.writeLogToFile(message);
-    super.error(message);
+  async error(message: string, context: string) {
+    const log = await this.writeLogToFile(message, context);
+    super.error(`Logger wtite new error log ----> \n${log}`);
   }
 }

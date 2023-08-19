@@ -15,6 +15,7 @@ import {
 import { ArtistService } from 'src/Artists/artist.service';
 import { TrackService } from 'src/Tracks/track.service';
 import { AlbumService } from 'src/Albums/album.service';
+import { CustomLoggerService } from 'src/Logger/logger.service';
 
 @Injectable()
 export class FavoritesService {
@@ -28,7 +29,10 @@ export class FavoritesService {
     private readonly artistService: ArtistService,
     private readonly albumService: AlbumService,
     private readonly trackService: TrackService,
-  ) {}
+    private logger: CustomLoggerService,
+  ) {
+    this.logger.setContext('UserService');
+  }
   status: number | null = null;
 
   async getAll() {
@@ -100,7 +104,15 @@ export class FavoritesService {
         this.status = StatusCodes.CREATED;
       } catch (error) {
         message = 'Operation failed!';
+        this.status = StatusCodes.BAD_REQUEST;
       }
+    }
+
+    if (
+      this.status === StatusCodes.BAD_REQUEST ||
+      this.status === StatusCodes.UNPROCESSABLE_ENTITY
+    ) {
+      this.logger.error(message, 'UserService');
     }
 
     const result: IResponse = {
@@ -137,6 +149,13 @@ export class FavoritesService {
       }
     }
 
+    if (
+      this.status === StatusCodes.BAD_REQUEST ||
+      this.status === StatusCodes.UNPROCESSABLE_ENTITY
+    ) {
+      this.logger.error(message, 'UserService');
+    }
+
     const result: IResponse = {
       data: message,
       statusCode: this.status,
@@ -169,6 +188,13 @@ export class FavoritesService {
         message = 'Operation failed!';
         this.status = StatusCodes.CONFLICT;
       }
+    }
+
+    if (
+      this.status === StatusCodes.BAD_REQUEST ||
+      this.status === StatusCodes.UNPROCESSABLE_ENTITY
+    ) {
+      this.logger.error(message, 'UserService');
     }
 
     const result: IResponse = {
@@ -211,10 +237,18 @@ export class FavoritesService {
       try {
         await this.favoriteArtistRepository.delete(artistToDel);
         this.status = StatusCodes.NO_CONTENT;
+        message = `Deleted Artist with id ${artistId}`;
       } catch (error) {
         message = 'Operation failed!';
-        this.status = StatusCodes.CONFLICT;
+        this.status = StatusCodes.BAD_REQUEST;
       }
+    }
+
+    if (
+      this.status === StatusCodes.BAD_REQUEST ||
+      this.status === StatusCodes.NOT_FOUND
+    ) {
+      this.logger.error(message, 'UserService');
     }
 
     const result: IResponse = {
@@ -257,10 +291,18 @@ export class FavoritesService {
       try {
         await this.favoriteAlbumRepository.delete(albumToDel);
         this.status = StatusCodes.NO_CONTENT;
+        message = `Deleted Album with id ${albumId}`;
       } catch (error) {
         message = 'Operation failed!';
-        this.status = StatusCodes.CONFLICT;
+        this.status = StatusCodes.BAD_REQUEST;
       }
+    }
+
+    if (
+      this.status === StatusCodes.BAD_REQUEST ||
+      this.status === StatusCodes.NOT_FOUND
+    ) {
+      this.logger.error(message, 'UserService');
     }
 
     const result: IResponse = {
@@ -303,10 +345,18 @@ export class FavoritesService {
       try {
         await this.favoriteTrackRepository.delete(trackToDel);
         this.status = StatusCodes.NO_CONTENT;
+        message = `Deleted Track with id ${trackId}`;
       } catch (error) {
         message = 'Operation failed!';
-        this.status = StatusCodes.CONFLICT;
+        this.status = StatusCodes.BAD_REQUEST;
       }
+    }
+
+    if (
+      this.status === StatusCodes.BAD_REQUEST ||
+      this.status === StatusCodes.NOT_FOUND
+    ) {
+      this.logger.error(message, 'UserService');
     }
 
     const result: IResponse = {

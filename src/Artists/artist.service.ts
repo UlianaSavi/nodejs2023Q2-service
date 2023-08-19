@@ -6,6 +6,7 @@ import { StatusCodes } from 'http-status-codes';
 import { IArtist, IArtistDto } from './artist.model';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Artist } from './artist.entity';
+import { CustomLoggerService } from 'src/Logger/logger.service';
 
 @Injectable()
 export class ArtistService {
@@ -14,7 +15,10 @@ export class ArtistService {
   constructor(
     @InjectRepository(Artist)
     private artistRepository: Repository<Artist>,
-  ) {}
+    private logger: CustomLoggerService,
+  ) {
+    this.logger.setContext('ArtistService');
+  }
 
   async getAll() {
     const artists = await this.artistRepository.find();
@@ -41,10 +45,15 @@ export class ArtistService {
     }
     if (isValid && candidate) {
       this.status = StatusCodes.OK;
+      message = null;
     }
     if (isValid && !candidate) {
       this.status = StatusCodes.NOT_FOUND;
       message = `Artist with id ${id} - not found!`;
+    }
+
+    if (message) {
+      this.logger.error(message, 'ArtistService');
     }
 
     const result: IResponse = {
@@ -76,6 +85,11 @@ export class ArtistService {
         message = 'Operation failed!';
       }
     }
+
+    if (message) {
+      this.logger.error(message, 'ArtistService');
+    }
+
     const result: IResponse = {
       data: message ? message : newArtist,
       statusCode: this.status,
@@ -121,9 +135,14 @@ export class ArtistService {
       try {
         await this.artistRepository.save(artistToUpdate);
         this.status = StatusCodes.OK;
+        message = null;
       } catch (error) {
         message = 'Operation failed!';
       }
+    }
+
+    if (message) {
+      this.logger.error(message, 'ArtistService');
     }
 
     const result: IResponse = {
@@ -156,9 +175,14 @@ export class ArtistService {
       try {
         await this.artistRepository.delete(candidate);
         this.status = StatusCodes.NO_CONTENT;
+        message = null;
       } catch (error) {
         message = 'Operation failed!';
       }
+    }
+
+    if (message) {
+      this.logger.error(message, 'ArtistService');
     }
 
     const updatedArr = (await this.getAll()).data;
