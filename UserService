@@ -1,0 +1,96 @@
+Message: [object Object] ----- Time: 1692454703811 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692454703818 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692454703844 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692454703847 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692454703850 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692454703853 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692454703885 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692454703890 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692454703896 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692454703910 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692454703917 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692454703922 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692454980858 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692454980865 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692454980886 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692454980890 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692454980893 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692454980896 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692454980938 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692454980944 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692454980951 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692454980968 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692454980974 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692454980982 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692455093520 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692455093526 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692455093552 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692455093556 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692455093559 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692455093562 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692455093600 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692455093605 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692455093611 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692455093627 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692455093633 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692455093639 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692455159282 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692455159290 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692455159319 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692455159322 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692455159325 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692455159328 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692455159362 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692455159368 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692455159376 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692455159394 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692455159399 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692455159405 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692455297788 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692455297794 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692455297816 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692455297820 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692455297823 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692455297826 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692455297866 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692455297872 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692455297878 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692455297893 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692455297899 ----- Context: src/Logger/logs/errors.log
+Message: [object Object] ----- Time: 1692455297905 ----- Context: src/Logger/logs/errors.log
+Message: Invalid Id! (Not UUID type.) ----- Time: 1692455602296 ----- Context: src/Logger/logs/errors.log
+Message: User with id 0a35dd62-e09f-444b-a628-f4e7c6954f57 - not found! ----- Time: 1692455602302 ----- Context: src/Logger/logs/errors.log
+Message: Incorrect data for operation! ----- Time: 1692455602323 ----- Context: src/Logger/logs/errors.log
+Message: Incorrect data for operation! ----- Time: 1692455602326 ----- Context: src/Logger/logs/errors.log
+Message: Incorrect data for operation! ----- Time: 1692455602330 ----- Context: src/Logger/logs/errors.log
+Message: Incorrect data for operation! ----- Time: 1692455602333 ----- Context: src/Logger/logs/errors.log
+Message: Invalid Id! (Not UUID type.) ----- Time: 1692455602371 ----- Context: src/Logger/logs/errors.log
+Message: Invalid DTO! ----- Time: 1692455602376 ----- Context: src/Logger/logs/errors.log
+Message: User with id 0a35dd62-e09f-444b-a628-f4e7c6954f57 not found! ----- Time: 1692455602382 ----- Context: src/Logger/logs/errors.log
+Message: User with id c74dab79-57e7-4fa6-9088-a6729cfe5780 - not found! ----- Time: 1692455602398 ----- Context: src/Logger/logs/errors.log
+Message: Invalid Id! (Not UUID type.) ----- Time: 1692455602404 ----- Context: src/Logger/logs/errors.log
+Message: User with id 0a35dd62-e09f-444b-a628-f4e7c6954f57 not found! ----- Time: 1692455602410 ----- Context: src/Logger/logs/errors.log
+Message: Invalid Id! (Not UUID type.) ----- Time: 1692455663870 ----- Context: src/Logger/logs/errors.log
+Message: User with id 0a35dd62-e09f-444b-a628-f4e7c6954f57 - not found! ----- Time: 1692455663877 ----- Context: src/Logger/logs/errors.log
+Message: Incorrect data for operation! ----- Time: 1692455663903 ----- Context: src/Logger/logs/errors.log
+Message: Incorrect data for operation! ----- Time: 1692455663906 ----- Context: src/Logger/logs/errors.log
+Message: Incorrect data for operation! ----- Time: 1692455663909 ----- Context: src/Logger/logs/errors.log
+Message: Incorrect data for operation! ----- Time: 1692455663912 ----- Context: src/Logger/logs/errors.log
+Message: Invalid Id! (Not UUID type.) ----- Time: 1692455663949 ----- Context: src/Logger/logs/errors.log
+Message: Invalid DTO! ----- Time: 1692455663954 ----- Context: src/Logger/logs/errors.log
+Message: User with id 0a35dd62-e09f-444b-a628-f4e7c6954f57 not found! ----- Time: 1692455663960 ----- Context: src/Logger/logs/errors.log
+Message: User with id af796042-cb77-4a11-9558-17dad0e7ba3f - not found! ----- Time: 1692455663975 ----- Context: src/Logger/logs/errors.log
+Message: Invalid Id! (Not UUID type.) ----- Time: 1692455663981 ----- Context: src/Logger/logs/errors.log
+Message: User with id 0a35dd62-e09f-444b-a628-f4e7c6954f57 not found! ----- Time: 1692455663986 ----- Context: src/Logger/logs/errors.log
+Message: Invalid Id! (Not UUID type.) ----- Time: 1692455703567 ----- Context: src/Logger/logs/errors.log
+Message: User with id 0a35dd62-e09f-444b-a628-f4e7c6954f57 - not found! ----- Time: 1692455703573 ----- Context: src/Logger/logs/errors.log
+Message: Incorrect data for operation! ----- Time: 1692455703596 ----- Context: src/Logger/logs/errors.log
+Message: Incorrect data for operation! ----- Time: 1692455703599 ----- Context: src/Logger/logs/errors.log
+Message: Incorrect data for operation! ----- Time: 1692455703601 ----- Context: src/Logger/logs/errors.log
+Message: Incorrect data for operation! ----- Time: 1692455703603 ----- Context: src/Logger/logs/errors.log
+Message: Invalid Id! (Not UUID type.) ----- Time: 1692455703634 ----- Context: src/Logger/logs/errors.log
+Message: Invalid DTO! ----- Time: 1692455703639 ----- Context: src/Logger/logs/errors.log
+Message: User with id 0a35dd62-e09f-444b-a628-f4e7c6954f57 not found! ----- Time: 1692455703644 ----- Context: src/Logger/logs/errors.log
+Message: User with id 814b55b4-a59a-4bee-b26c-f346ed31c9be - not found! ----- Time: 1692455703658 ----- Context: src/Logger/logs/errors.log
+Message: Invalid Id! (Not UUID type.) ----- Time: 1692455703663 ----- Context: src/Logger/logs/errors.log
+Message: User with id 0a35dd62-e09f-444b-a628-f4e7c6954f57 not found! ----- Time: 1692455703671 ----- Context: src/Logger/logs/errors.log
