@@ -3,8 +3,7 @@ import { LogLevel } from '@nestjs/common/services';
 import { ILog } from './models/reqLog.model';
 import { writeLogToFile } from './logsWriter';
 
-// TODO: добавить ротацию логов и ппеременную их размера в env +20
-// TODO: создать env.exemple
+// TODO: добавить ротацию логов и переменную их размера в env +20
 
 @Injectable({ scope: Scope.TRANSIENT })
 export class CustomLoggerService extends ConsoleLogger {
