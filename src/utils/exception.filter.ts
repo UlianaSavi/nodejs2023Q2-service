@@ -5,19 +5,24 @@ import {
   ArgumentsHost,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { StatusCodes } from 'http-status-codes';
+import { CustomLoggerService } from 'src/Logger/logger.service';
 
 @Catch(HttpException)
 export class CustomExceptionFilter implements ExceptionFilter {
+  private logger = new CustomLoggerService();
+
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
     const status = exception.getStatus();
 
-    if (status === StatusCodes.INTERNAL_SERVER_ERROR) {
-      console.log('Custom Exception Filter catch 500 error!');
-    }
+    // logging is implemented for uncaughtException && unhandledRejection events
+    this.logger.log(
+      `Custom Exception Filter catch error with status code ${status} !`,
+    );
+
+    this.logger.uncaughtLog(status);
 
     response.status(status).json({
       statusCode: status,

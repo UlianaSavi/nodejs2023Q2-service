@@ -3,14 +3,17 @@ import { LogLevel } from '@nestjs/common/services';
 import { ILog } from './models/reqLog.model';
 import { writeLogToFile } from './logsWriter';
 
+// TODO: добавить ротацию логов и ппеременную их размера в env +20
+// TODO: создать env.exemple
+
 @Injectable({ scope: Scope.TRANSIENT })
 export class CustomLoggerService extends ConsoleLogger {
   setLogLevels(levels: LogLevel[]): void {
-    console.log(levels);
+    this.log(levels.at(0));
   }
 
   log(message: string) {
-    console.log(message);
+    super.log(message);
   }
 
   async error(message: string, context: string) {
@@ -24,27 +27,41 @@ export class CustomLoggerService extends ConsoleLogger {
     super.error(`Logger wtite new ERROR log ----> \n${log}`);
   }
 
-  async requestLog(url: string, query: string, body: string) {
+  async requestDebug(url: string, query: string, body: string) {
     const filePath = 'src/Logger/logs/request.log';
     const dataToLog: ILog = {
-      type: 'requestLog',
+      type: 'requestDebug',
       url,
       query,
       body,
     };
     const log = await writeLogToFile(dataToLog, filePath);
-
-    super.log(`Logger wtite new REQUEST log ----> \n${log}`);
+    super.debug(`Logger wtite new REQUEST log ----> \n${log}`);
   }
 
-  async responseLog(statusCode: number) {
+  async responseDebug(statusCode: number) {
     const filePath = 'src/Logger/logs/response.log';
     const dataToLog: ILog = {
-      type: 'responseLog',
+      type: 'responseDebug',
       statusCode,
     };
     const log = await writeLogToFile(dataToLog, filePath);
 
-    super.log(`Logger wtite new RESPONSE log ----> \n${log}`);
+    super.debug(`Logger wtite new RESPONSE log ----> \n${log}`);
+  }
+
+  async uncaughtLog(statusCode: number) {
+    const filePath = 'src/Logger/logs/uncaught.log';
+    const dataToLog: ILog = {
+      type: 'uncaughtLog',
+      statusCode,
+    };
+    const log = await writeLogToFile(dataToLog, filePath);
+
+    this.log(`Logger wtite new UNCAUGHT log ----> \n${log}`);
+  }
+
+  verbose(message: string) {
+    super.verbose(message);
   }
 }

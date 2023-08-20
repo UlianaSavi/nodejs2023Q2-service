@@ -12,7 +12,7 @@ export class UserController {
 
   @Get()
   async getAll(@Req() req: Request, @Res() res: Response) {
-    this.logger.requestLog(
+    this.logger.requestDebug(
       req?.url || '',
       JSON.stringify(req?.query, null, 4),
       req?.body || '',
@@ -20,7 +20,7 @@ export class UserController {
 
     const userRes = await this.userService.getAll();
 
-    this.logger.responseLog(userRes.statusCode);
+    this.logger.responseDebug(userRes.statusCode);
 
     res.status(userRes.statusCode);
     res.send(userRes.data);
@@ -31,7 +31,7 @@ export class UserController {
     const { params } = req;
     const id = params.id;
 
-    this.logger.requestLog(
+    this.logger.requestDebug(
       req?.url || '',
       JSON.stringify(req?.query, null, 4),
       req?.body || '',
@@ -39,7 +39,7 @@ export class UserController {
 
     const userRes = await this.userService.getById(id);
 
-    this.logger.responseLog(userRes.statusCode);
+    this.logger.responseDebug(userRes.statusCode);
 
     res.status(userRes.statusCode);
     res.send(userRes.data);
@@ -49,7 +49,7 @@ export class UserController {
   async create(@Req() req: Request, @Res() res: Response) {
     const { body } = req;
 
-    this.logger.requestLog(
+    this.logger.requestDebug(
       req?.url || '',
       JSON.stringify(req?.query, null, 4),
       req?.body || '',
@@ -57,7 +57,7 @@ export class UserController {
 
     const userRes = await this.userService.createUser(body);
 
-    this.logger.responseLog(userRes.statusCode);
+    this.logger.responseDebug(userRes.statusCode);
 
     res.status(userRes.statusCode);
     res.send(userRes.data);
@@ -68,7 +68,7 @@ export class UserController {
     const { body, params } = req;
     const id = params.id;
 
-    this.logger.requestLog(
+    this.logger.requestDebug(
       req?.url || '',
       JSON.stringify(req?.query, null, 4),
       body || '',
@@ -76,7 +76,7 @@ export class UserController {
 
     const userRes = await this.userService.updateUserPassword(id, body);
 
-    this.logger.responseLog(userRes.statusCode);
+    this.logger.responseDebug(userRes.statusCode);
 
     res.status(userRes.statusCode);
     res.send(userRes.data);
@@ -87,7 +87,7 @@ export class UserController {
     const { params } = req;
     const id = params.id;
 
-    this.logger.requestLog(
+    this.logger.requestDebug(
       req?.url || '',
       JSON.stringify(req?.query, null, 4),
       req?.body || '',
@@ -95,7 +95,7 @@ export class UserController {
 
     const userRes = await this.userService.deleteUser(id);
 
-    this.logger.responseLog(userRes.statusCode);
+    this.logger.responseDebug(userRes.statusCode);
 
     res.status(userRes.statusCode);
     res.send(userRes.data);

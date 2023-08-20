@@ -9,6 +9,10 @@ import { CustomExceptionFilter } from './utils/exception.filter';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     bufferLogs: true,
+    logger:
+      process.env.NODE_ENV === 'dev'
+        ? ['log', 'debug', 'error', 'verbose', 'warn']
+        : ['error', 'warn'],
   });
 
   app.useLogger(new CustomLoggerService());

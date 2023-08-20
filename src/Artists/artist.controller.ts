@@ -6,6 +6,7 @@ import { AlbumService } from 'src/Albums/album.service';
 import { FavoritesService } from 'src/Favorites/favorites.service';
 import { IAlbum } from 'src/Albums/album.model';
 import { ITrack } from 'src/Tracks/track.model';
+import { CustomLoggerService } from 'src/Logger/logger.service';
 
 @Controller('artist')
 export class ArtistController {
@@ -14,30 +15,57 @@ export class ArtistController {
     private readonly trackService: TrackService,
     private readonly albumService: AlbumService,
     private readonly favsService: FavoritesService,
+    private logger: CustomLoggerService,
   ) {}
 
   @Get()
-  async getAll(@Res() res: Response) {
+  async getAll(@Req() req: Request, @Res() res: Response) {
+    this.logger.requestDebug(
+      req?.url || '',
+      JSON.stringify(req?.query, null, 4),
+      req?.body || '',
+    );
+
     const artistRes = await this.artistService.getAll();
+
+    this.logger.responseDebug(artistRes.statusCode);
+
     res.status(artistRes.statusCode);
     res.send(artistRes.data);
   }
 
   @Get('/:id')
   async getById(@Req() req: Request, @Res() res: Response) {
+    this.logger.requestDebug(
+      req?.url || '',
+      JSON.stringify(req?.query, null, 4),
+      req?.body || '',
+    );
+
     const { params } = req;
     const id = params.id;
 
     const artistRes = await this.artistService.getById(id);
+
+    this.logger.responseDebug(artistRes.statusCode);
+
     res.status(artistRes.statusCode);
     res.send(artistRes.data);
   }
 
   @Post()
   async create(@Req() req: Request, @Res() res: Response) {
+    this.logger.requestDebug(
+      req?.url || '',
+      JSON.stringify(req?.query, null, 4),
+      req?.body || '',
+    );
+
     const { body } = req;
 
     const artistRes = await this.artistService.createArtist(body);
+
+    this.logger.responseDebug(artistRes.statusCode);
 
     res.status(artistRes.statusCode);
     res.send(artistRes.data);
@@ -45,16 +73,31 @@ export class ArtistController {
 
   @Put('/:id')
   async update(@Req() req: Request, @Res() res: Response) {
+    this.logger.requestDebug(
+      req?.url || '',
+      JSON.stringify(req?.query, null, 4),
+      req?.body || '',
+    );
+
     const { body, params } = req;
     const id = params.id;
 
     const artistRes = await this.artistService.updateArtist(id, body);
+
+    this.logger.responseDebug(artistRes.statusCode);
+
     res.status(artistRes.statusCode);
     res.send(artistRes.data);
   }
 
   @Delete('/:id')
   async delete(@Req() req: Request, @Res() res: Response) {
+    this.logger.requestDebug(
+      req?.url || '',
+      JSON.stringify(req?.query, null, 4),
+      req?.body || '',
+    );
+
     const { params } = req;
     const id = params.id;
 
@@ -95,8 +138,11 @@ export class ArtistController {
     try {
       await this.favsService.deleteArtistFromFavs(id);
     } catch (error) {
+      this.logger.responseDebug(artistRes.statusCode);
       res.status(error.statusCode);
     }
+
+    this.logger.responseDebug(artistRes.statusCode);
 
     res.status(artistRes.statusCode);
     res.send(artistRes.data);
