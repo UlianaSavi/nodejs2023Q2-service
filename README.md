@@ -27,7 +27,7 @@ npm run start
 
 ### Dev start
 ```
-npm run start
+npm run start:dev
 ```
 
 After starting the app on port (`4000` as default) you can open:
