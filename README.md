@@ -126,7 +126,7 @@ For more information, visit: https://code.visualstudio.com/docs/editor/debugging
 
 - `+10` User password saved into database as hash - в методе `signUp` сервиса `AuthService` строка `29` `hashPassword`
 
-- `-20` Access Token is implemented, JWT payload contains userId and login, secret key is saved in .env. - имя env перемнной `JWT_SECRET_KEY`.
+- `+20` Access Token is implemented, JWT payload contains userId and login, secret key is saved in .env. - имя env перемнной `JWT_SECRET_KEY`.
 
 - `+40` Authentication is required for the access to all routes except `/auth/signup`, `/auth/login`, /doc and /. - для этого в `utils` есть `public.decorator.ts` и возле соотв. роутов к контроллерах выставлены `@Public()`.
 
@@ -166,7 +166,7 @@ levels. For example if you set level 2, all messages with levels 0, 1 and 2 shou
 
 - `+10` User password saved into database as hash  - in method `signUp` in the service `AuthService` str `29` `hashPassword`
 
-- `-20` Access Token is implemented,JWT payload contains userId and login, secret key is saved in .env.
+- `+20` Access Token is implemented,JWT payload contains userId and login, secret key is saved in .env.
 
 - `+40` Authentication is required for the access to all routes except `/auth/signup`, `/auth/login`, /doc and /. - to do this, there is `public.decorator.ts` in `utils` folder and next to the corresponding the routes to the controllers are set to `@Public()`.
 
