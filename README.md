@@ -18,8 +18,20 @@ npm install
 ```
 
 ## Running application
-**(for Auth && logging task we dont need docker start (all wotk more faster in usual mode))**
-**(Для проверки текущего кроссчека не обязательно юзать докер. Без него все работает быстрее. Поэтому для кроссчека запустите приложение через npm run start / start:dev))**
+## Start app with using Docker
+
+### With Docker compose:
+**По дефолту прописан npm run start, для работы d dev модe добавьте в Dockerfile в CMD  вместо ["npm", "run", "start"] - ["npm", "run", "start:dev"] и в docker-compose.yml в поле command:  вместо npm run start - npm run start:dev**
+
+1 step:
+```
+docker-compose build
+```
+2 step:
+### Dev start
+```
+docker-compose up --build -V
+
 ### Usual start 
 ```
 npm run start
@@ -27,7 +39,7 @@ npm run start
 
 ### Dev start
 ```
-npm run start
+npm run start:dev
 ```
 
 After starting the app on port (`4000` as default) you can open:
