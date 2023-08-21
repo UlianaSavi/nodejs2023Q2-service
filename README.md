@@ -31,7 +31,7 @@ docker-compose build
 ### Dev start
 ```
 docker-compose up --build -V
-
+```
 ### Usual start 
 ```
 npm run start
