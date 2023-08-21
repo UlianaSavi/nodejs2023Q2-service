@@ -7,7 +7,7 @@ import { IResponse } from 'src/models/response.model';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/Users/user.service';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class AuthService {
