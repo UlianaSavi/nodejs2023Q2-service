@@ -37,7 +37,7 @@ export async function writeLogToFile(
       console.log('Error in logger: ', err?.message);
     }
   }
-  if (data.type === 'responseDebug' || data.type === 'uncaughtLog') {
+  if (data.type === 'responseDebug' || data.type === 'uncaughError') {
     try {
       const chunk = `statusCode: ${
         data?.statusCode

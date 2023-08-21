@@ -22,6 +22,7 @@ export interface IResponse {
     | Album[]
     | Track
     | Track[]
+    | { accessToken: string }
     | string;
   statusCode: number;
 }

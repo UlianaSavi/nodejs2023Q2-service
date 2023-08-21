@@ -24,6 +24,9 @@ import {
   FavoriteAlbum,
   FavoriteTrack,
 } from './Favorites/favorites.entity';
+import { AuthGuard } from './Auth/auth.guard';
+import { APP_GUARD } from '@nestjs/core/constants';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -34,6 +37,10 @@ import {
     AuthModule,
     AlbumModule,
     LoggerModule,
+    JwtModule.register({
+      secret: 'secret',
+      signOptions: { expiresIn: '60s' },
+    }),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DOCKER_HOST || HOSTNAME,
@@ -54,6 +61,12 @@ import {
     }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+  ],
 })
 export class AppModule {}

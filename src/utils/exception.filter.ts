@@ -22,7 +22,7 @@ export class CustomExceptionFilter implements ExceptionFilter {
       `Custom Exception Filter catch error with status code ${status} !`,
     );
 
-    this.logger.uncaughtLog(status);
+    this.logger.uncaughError(status);
 
     response.status(status).json({
       statusCode: status,
