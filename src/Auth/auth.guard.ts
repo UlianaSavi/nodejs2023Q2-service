@@ -9,6 +9,7 @@ import { Request } from 'express';
 import { Reflector } from '@nestjs/core';
 import { CustomLoggerService } from 'src/Logger/logger.service';
 import { IS_PUBLIC_KEY } from 'src/utils/public.decorator';
+import { PLUG_SECRET } from 'src/constants';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -35,7 +36,7 @@ export class AuthGuard implements CanActivate {
     }
     try {
       const payload = await this.jwtService.verifyAsync(token, {
-        secret: 'secret',
+        secret: process.env.JWT_SECRET_KEY || PLUG_SECRET,
       });
       request['user'] = payload;
     } catch {

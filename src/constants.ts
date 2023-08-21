@@ -6,6 +6,8 @@ export const POSTGRES_USERNAME = 'postgres';
 export const POSTGRES_PASSWORD = 'root';
 export const DB_NAME = 'Node-js-server';
 
+export const PLUG_SECRET = 'blaBlaBla';
+
 export enum ROUTES {
   USER = '/user',
   TRACK = '/track',

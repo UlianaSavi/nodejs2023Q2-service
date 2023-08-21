@@ -24,18 +24,18 @@ export class AuthController {
 
     const { body } = req;
 
-    const signupRes = await this.authService.signUp(body);
+    const signUpRes = await this.authService.signUp(body);
 
-    if (signupRes.statusCode === StatusCodes.NOT_FOUND) {
-      this.logger.error('Wrong password for singIn!', 'AuthService');
-      res.status(signupRes.statusCode);
+    if (!signUpRes?.data) {
+      this.logger.error('Bad password for singIn!', 'AuthService signup');
+      res.status(StatusCodes.BAD_REQUEST);
       return;
     }
 
-    this.logger.responseDebug(signupRes.statusCode);
+    this.logger.responseDebug(signUpRes.statusCode);
 
-    res.status(signupRes.statusCode);
-    res.send(signupRes.data);
+    res.status(signUpRes.statusCode);
+    res.send(signUpRes.data);
   }
 
   @Public()
@@ -49,11 +49,11 @@ export class AuthController {
 
     const { body } = req;
 
-    const singInRes: IResponse = await this.authService.signIn(body);
+    const singInRes: IResponse = await this.authService.login(body);
 
-    if (!singInRes.data) {
-      this.logger.error('Bad data for login!');
-      res.status(StatusCodes.BAD_REQUEST);
+    if (singInRes.statusCode === StatusCodes.FORBIDDEN) {
+      this.logger.error(singInRes.data as string);
+      res.status(StatusCodes.FORBIDDEN);
       return;
     }
 

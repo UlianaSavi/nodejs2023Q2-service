@@ -12,6 +12,7 @@ import { LoggerModule } from './Logger/logger.module';
 import {
   DB_NAME,
   HOSTNAME,
+  PLUG_SECRET,
   POSTGRES_PASSWORD,
   POSTGRES_PORT,
   POSTGRES_USERNAME,
@@ -38,7 +39,7 @@ import { JwtModule } from '@nestjs/jwt';
     AlbumModule,
     LoggerModule,
     JwtModule.register({
-      secret: 'secret',
+      secret: process.env.JWT_SECRET_KEY || PLUG_SECRET,
       signOptions: { expiresIn: '60s' },
     }),
     TypeOrmModule.forRoot({

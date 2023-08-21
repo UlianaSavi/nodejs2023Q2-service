@@ -26,44 +26,9 @@ npm start
 
 ## Start app with using Docker
 
-### Single image:
-Create docker image:
-```
-docker build -t <YOUR IMAGE NAME> . (exemple: docker build -t test-app .)
-```
+### With Docker compose:
+**По дефолту прописан npm run start, для работы d dev модt добавьте в Dockerfile в CMD  вместо ["npm", "run", "start"] - ["npm", "run", "start:dev"] и в docker-compose.yml в поле command:  вместо npm run start - npm run start:dev**
 
-Find created docker image `ID` (table where `IMAGE ID` - our `ID`):
-```
-docker images
-```
-
-Create container in image: (after this command app already run in container on `http://localhost:4000/api`)
-```
-docker run -d -p 4000:4000 --restart=always <IMAGE ID>
-```
-
-Find docker `ID` (table where `CONTAINER ID` - our `ID`):
-```
-docker ps
-```
-
-Stop container:
-```
-docker stop <CONTAINER ID>
-```
-
-Delete all containers:
-```
-docker container prune
-```
-
-Delete all images:
-```
-docker image prune
-```
-
-### with Docker compose:
-**По дефолту прописан npm run start, для проверки работы dev мода добавьте в Dockerfile в CMD  вместо ["npm", "run", "start"] - ["npm", "run", "start:dev"] и в docker-compose.yml в поле command:  вместо npm run start - npm run start:dev. Так же при проверке работы dev мода нужно учесть его скорость, подробнее ниже, в рекомендации 0**
 1 step:
 ```
 docker-compose build
@@ -80,9 +45,9 @@ After starting the app on port (`4000` as default) you can open:
 ### Migration:
 (instructions for migrations)
 
-РУ Миграции должны запускаться на бд, на которой до этого их не было наче будет ошибка
+РУ Миграции должны запускаться на бд, на которой до этого их не было - иначе будет ошибка.
 
-EN Migrations must be run on a database that did not have them before, otherwise there will be an error
+EN Migrations must be run on a database that did not have them before, otherwise there will be an error.
 
 **generate** migration from entities:
 ```
@@ -139,41 +104,83 @@ Press <kbd>F5</kbd> to debug.
 For more information, visit: https://code.visualstudio.com/docs/editor/debugging
 
 
-### Information for CROSSCHECK (#2):
+### Information for CROSSCHECK (#3):
 **RU**
-- Команды для запуска Docker указаны выше в нужной последовательности (для проверки можно смотреть все, что под загоовком "with Docker compose").
-- Чтобы проверить пункт "+30 container auto restart after crash" - вы можете почитать инфу по этой ссылке и по ссылкам на статьи, указанные внизу страницы (https://serverfault.com/questions/884759/how-does-restart-always-policy-work-in-docker-compose). Еще можно зайти в `docker-compose.yml` и убедиться в наличии строки `restart: always`.
-- Чтобы проверить пункт "+20 Your build image is pushed to DockerHub" - При запуске команды из `Step 2` вы можете видеть там флаг `--build`. Так же в ПР приложила скринот с запушенным репозиторием. И вы можете запустить команду `docker pull ulianasavi/test-app:latest` - это спулит вам image с DockerHub
-- Чтобы проверить пункт "+10 Variables used for connection to database to be stored in `.env`" - зайдите в app.controller, там идет коннект с базой данных через typeorm и в `TypeOrmModule.forRoot` вы увидите, что все переменные вынесены как в `.env` файл и используются от туда, так и в константы для подстраховки. Далее в файле `docker-compose.yml`
-так же используются переменны из `.env`.
-- Для проверки пункта "+30 database files and logs to be stored in volumes instead of container" - Этот пункт можно проверить зайдя в `docker-compose.yml` -  тут у базы данных есть поле
-`volumes`, так же как и у сервера свой, все `volumes` указаны внизу того же файла.
-- Для проверки пункта "+10 Implemented npm script for vulnerabilities scanning (free solution)" - запустите команду `npm run start:scan` - она соотв. запустит проверку на уязвимости и выведет их в консоль.
-- Для проверки пункта "+30 user-defined bridge is created and configured" - запустите все "with Docker compose" и затем введите во второй терминал команду `docker network ls`
-в появившейся таблице вы найдете помимо дефолтного моста кастомный. Скопируйте его имя и вызовете команду `docker inspect <NETWORK NAME>`. В появившемся массиве найдите поле 
-`"Containers"` - в этом объекте вы найдете информацию о контейнерах, между которыми шарится сеть. Там должен быть каки сервер, так и база данных. ("Name": "server" и "Name": "nodejs2023q2-service-postgres-1").
-- Для проверки пункта "Migrations are used to create database entities" - найдите в этом же файле readme.md заголовок "Migration" и следуйте инструкциям.
-- Рекомендация 0: При запуске в dev моде после сообщения от сервера `Found 0 errors. Watching for file changes.` часто сервер ОЧЕНЬ долго собирается или виснет (до 5 минут - нужно подождать, если дольше - значит упал, нужно все остановить, удалить и пересобрать). В таком случае нужно либо подождать минут 3-5, либо перезапустить все. Так же лучше для проверки работы тестов и тд выключать дев мод, тк он может упасть и завалить тесты (либо заставит долго ждать).
-- Рекомендация 1: не создавайте слишком много контейнеров, тк все может полететь из-за нехватки памяти на компе.
-- Рекомендация 2:Так же если вы используете Docker с винды - нужно учитывать, что docker desktop должен быть запущен. Он частенько может вылетать и нуждаться в перезагрузке, поэтому
-если видите ошибку, попробуйте перезапустить docker desktop, почистить все существующие контейнеры и images, созданные в процессе кроссчек
-и после этого заново пройтись по командам, указанным выше (создание и запуск контейнеров и т.д.)
+*Для упрощения проверки ниже списком выведены пункты с баллами и краткая информация о том, куда смотреть, чтобы их проверить (не считая совсем очевидные пункты):*
+
+- `+20` Custom LoggingService is implemented and used for logging
+
+- `+20` Custom Exception Filter is implemented and used for handling exceptions during request processing - лежит в папке `utils` и используется в `main.ts`
+
+- `+20` Logging for request (of at least url, query parameters, body) and response with status code is implemented. - можно зайди в любой контроллер и увидеть там а) перед обращением к сервису логирование запроса, а после б) логирование статуса кода ответа.
+
+- `+20` Error handling is implemented including sending response with an appropriate http status code and errors logging.
+
+- `+10` Error handling and logging is implemented for uncaughtException event. - в Exception Filter.
+
+- `+10` Error handling and logging is implemented for unhandledRejection event. - в Exception Filter.
+
+- `+30` Route `/auth/signup` implemented correctly, related logic is divided between controller and corresponding service
+
+- `+30` Route `/auth/login` has been implemented, related logic is divided between controller and corresponding service
+
+- `+10` User password saved into database as hash - в методе `signUp` сервиса `AuthService` строка `29` `hashPassword`
+
+- `-20` Access Token is implemented, JWT payload contains userId and login, secret key is saved in .env. - имя env перемнной `JWT_SECRET_KEY`.
+
+- `+40` Authentication is required for the access to all routes except `/auth/signup`, `/auth/login`, /doc and /. - для этого в `utils` есть `public.decorator.ts` и возле соотв. роутов к контроллерах выставлены `@Public()`.
+
+- `-10` Separate module is implemented within application scope to check that all requests to all routes except mentioned above contain required JWT token
+
+- `+20` Logs are written to a file. - по пути `Logger/logs/`.
+
+- `-10` Logs files are rotated with size.
+
+- `-10` Add environment variable to specify max file size.
+
+- `+10` Error logs are written to a separate file (either only to a separate file or in addition to logging into a common file). - по пути `Logger/logs/` есть несколько файлов, под: 1) ошибки, 2)запросы, 3) ответы, 4)uncaught.
+
+- `+20` Add environment variable to specify logging level and corresponding functionality. Logs with configured level to be registered as well as other higher priority     
+levels. For example if you set level 2, all messages with levels 0, 1 and 2 should be logged. You should use Nest.js logging levels. - в `package.json` - сетятся в команды запуска соотв. env переменные, а уровень логирования указан в `main.ts`.
+
+- `-30` Route /auth/refresh implemented correctly, related logic is divided between controller and corresponding service
 
 **EN**
-- The commands to run Docker are listed above in the correct sequence. (for crosscheck, you can look at everything under the heading "with Docker compose").
-- Tto check the point "+30 container auto restart after crash" - you can read info at this link and at the links to the articles listed in the bottom of page (https://serverfault.com/questions/884759/how-does-restart-always-policy-work-in-docker-compose ). You can also go to `docker-compose.yml` and make sure there is a line `restart: always`.
-- To check the point "+20 Your build image is pushed to Docker Pub" - When running the command from `Step 2` you can see the flag `--build` there. I also attached a screenshot with the pushed repository in the PR. And you can run the command `docker pull ulianasav/testapp:latest` - this pull you an image from DockerHub.
-- To check the point "+10 Variables used for connection to database to be stored in `.env`" - go to app.controller, there is a connection to the database via typeorm and in   `TypeOrmModule.forRoot` you will see that all variables are rendered as in `.env` file and used from there, and in constants for safety. Also in `docker-compose.yml`
-you can see using of `.env` variables.
-- To check the point "+30 database files and logs to be stored in volumes instead of container" - This point can be checked by going to `docker-compose.yml` - here the database has a field
-`volumes`, just like the server has its own, all `volumes` are listed at the bottom of the same file.
-- To check the point "+10 Implemented npmscript for vulnerabilities scanning (free solution)" - run the command `npm run start:scan` - it corresponds to it will run a vulnerability check and display them in the console.
-- To check the point "+30 user-defined bridge is created and configured" - do everything under "using Docker compose" title in README.md and then enter the command `docker network ls` into the second terminal.
-In the table that appears, you will find a custom bridge in addition to the default one. Copy it name and enter the command `docker inspect <NETWORK NAME>`. In the array that appears, find the field 
-`"Containers"` - here you will find info about the contaiыners between which the network is available. There should be both - a server and a database. ("Name": "server" and "Name": "nodejs2023q2-service-postgres-1").
-- To check the point "Migrations are used to create database entities" - find in the same file readme.md title "Migration" and follow the instructions.
-- Recommendation 0: When running in dev mode after a message from the server `Found 0 errors. Watching for file changes.` often the server takes a VERY long time to build or hangs (up to 5 minutes - need to wait, if longer - fell, you need to stop everything, delete and rebuild). In this case, you either need to wait 3-5 minutes, or restart everything. It is also better to turn off the dev mod to check the work of tests because it can fall and fail the tests (or make you wait a long time).
-- Recommendation 1: do not create too many containers, because everything can fly due to lack of memory on the computer.
-- Recommendation 2: Also, if you use Docker from Windows, you need to take into account that docker desktop must be running. It can often crash and need to be restarted, so
-if you see an error, try restarting docker desktop, cleaning all existing containers and images created during the crosscheck process
-and then re-go through the commands listed above (creating and starting containers, etc.)
+*To simplify the crosscheck, the points and brief information about where to look to check them are listed below:*
+
+- `+20` Custom LoggingService is implemented and used for logging
+
+- `+20` Custom Exception Filter is implemented and used for handling exceptions during request processing - it's in utils folder and use in `main.ts`.
+
+- `+20` Logging for request (of at least url, query parameters, body) and response with status code is implemented. - you can go to any controller and see there a) before call the service, logging the request, and after b) logging the status of the response code.
+
+- `+20` Error handling is implemented including sending response with an appropriate http status code and errors logging.
+
+- `+10` Error handling and logging is implemented for uncaughtException event. - in Exception Filter.
+
+- `+10` Error handling and logging is implemented for unhandledRejection event. - in Exception Filter.
+
+- `+30` Route `/auth/signup` implemented correctly, related logic is divided between controller and corresponding service
+
+- `+30` Route `/auth/login` has been implemented, related logic is divided between controller and corresponding service
+
+- `+10` User password saved into database as hash  - in method `signUp` in the service `AuthService` str `29` `hashPassword`
+
+- `-20` Access Token is implemented,JWT payload contains userId and login, secret key is saved in .env.
+
+- `+40` Authentication is required for the access to all routes except `/auth/signup`, `/auth/login`, /doc and /. - to do this, there is `public.decorator.ts` in `utils` folder and next to the corresponding the routes to the controllers are set to `@Public()`.
+
+- `-10` Separate module is implemented within application scope to check that all requests to all routes except mentioned above contain required JWT token
+
+- `+20` Logs are written to a file. - in `Logger/logs/`.
+
+- `-10` Logs files are rotated with size.
+
+- `-10` Add environment variable to specify max file size.
+
+- `+10` Error logs are written to a separate file (either only to a separate file or in addition to logging into a common file). - there are several files under the path `Logger/log/`: 1) errors, 2)requests, 3) responses, 4)sm uncaught.
+
+- `+20` Add environment variable to specify logging level and corresponding functionality. Logs with configured level to be registered as well as other higher priority     
+levels. For example if you set level 2, all messages with levels 0, 1 and 2 should be logged. You should use Nest.js logging levels. - in `package.json` - sets in the start commands .env variables, and the logging level is specified in `main.ts`.
+
+- `-30` Route /auth/refresh implemented correctly, related logic is divided between controller and corresponding service

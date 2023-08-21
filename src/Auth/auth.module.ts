@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/Users/user.entity';
 import { LoggerModule } from 'src/Logger/logger.module';
 import { UserModule } from 'src/Users/users.module';
+import { PLUG_SECRET } from 'src/constants';
 
 @Module({
   imports: [
@@ -13,7 +14,7 @@ import { UserModule } from 'src/Users/users.module';
     LoggerModule,
     UserModule,
     JwtModule.register({
-      secret: 'secret',
+      secret: process.env.JWT_SECRET_KEY || PLUG_SECRET,
       signOptions: { expiresIn: '60s' },
     }),
   ],
