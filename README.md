@@ -28,7 +28,6 @@ npm install
 docker-compose build
 ```
 2 step:
-### Dev start
 ```
 docker-compose up --build -V
 ```
@@ -37,7 +36,7 @@ docker-compose up --build -V
 npm run start
 ```
 
-### Dev start
+## Dev start
 ```
 npm run start:dev
 ```
