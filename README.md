@@ -133,7 +133,7 @@ For more information, visit: https://code.visualstudio.com/docs/editor/debugging
 
 - `+40` Authentication is required for the access to all routes except `/auth/signup`, `/auth/login`, /doc and /. - для этого в `utils` есть `public.decorator.ts` и возле соотв. роутов к контроллерах выставлены `@Public()`.
 
-- `-10` Separate module is implemented within application scope to check that all requests to all routes except mentioned above contain required JWT token
+- `+10` Separate module is implemented within application scope to check that all requests to all routes except mentioned above contain required JWT token
 
 - `+20` Logs are written to a file. - по пути `Logger/logs/`.
 
@@ -173,7 +173,7 @@ levels. For example if you set level 2, all messages with levels 0, 1 and 2 shou
 
 - `+40` Authentication is required for the access to all routes except `/auth/signup`, `/auth/login`, /doc and /. - to do this, there is `public.decorator.ts` in `utils` folder and next to the corresponding the routes to the controllers are set to `@Public()`.
 
-- `-10` Separate module is implemented within application scope to check that all requests to all routes except mentioned above contain required JWT token
+- `+10` Separate module is implemented within application scope to check that all requests to all routes except mentioned above contain required JWT token
 
 - `+20` Logs are written to a file. - in `Logger/logs/`.
 
