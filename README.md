@@ -18,24 +18,16 @@ npm install
 ```
 
 ## Running application
+**(for Auth && logging task we dont need docker start (all wotk more faster in usual mode))**
+**(Для проверки текущего кроссчека не обязательно юзать докер. Без него все работает быстрее. Поэтому для кроссчека запустите приложение через npm run start / start:dev))**
+### Usual start 
+```
+npm run start
+```
 
-### Usual start
+### Dev start
 ```
-npm start
-```
-
-## Start app with using Docker
-
-### With Docker compose:
-**По дефолту прописан npm run start, для работы d dev модt добавьте в Dockerfile в CMD  вместо ["npm", "run", "start"] - ["npm", "run", "start:dev"] и в docker-compose.yml в поле command:  вместо npm run start - npm run start:dev**
-
-1 step:
-```
-docker-compose build
-```
-2 step:
-```
-docker-compose up --build -V
+npm run start
 ```
 
 After starting the app on port (`4000` as default) you can open:
@@ -134,7 +126,7 @@ For more information, visit: https://code.visualstudio.com/docs/editor/debugging
 
 - `+20` Logs are written to a file. - по пути `Logger/logs/`.
 
-- `-10` Logs files are rotated with size.
+- `+10` Logs files are rotated with size.  - в функции `writeLogToFile` - используется `checkRotation`.
 
 - `-10` Add environment variable to specify max file size.
 
@@ -174,7 +166,7 @@ levels. For example if you set level 2, all messages with levels 0, 1 and 2 shou
 
 - `+20` Logs are written to a file. - in `Logger/logs/`.
 
-- `-10` Logs files are rotated with size.
+- `+10` Logs files are rotated with size. - in func `writeLogToFile` - use `checkRotation` logic.
 
 - `-10` Add environment variable to specify max file size.
 

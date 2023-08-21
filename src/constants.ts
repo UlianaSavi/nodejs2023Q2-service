@@ -6,6 +6,8 @@ export const POSTGRES_USERNAME = 'postgres';
 export const POSTGRES_PASSWORD = 'root';
 export const DB_NAME = 'Node-js-server';
 
+export const MAX_LOG_FILE_SIZE = 10485760;
+
 export const PLUG_SECRET = 'blaBlaBla';
 
 export enum ROUTES {

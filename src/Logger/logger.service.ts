@@ -14,7 +14,7 @@ export class CustomLoggerService extends ConsoleLogger {
   }
 
   async error(message: string, context?: string) {
-    const filePath = 'src/Logger/logs/errors.log';
+    const filePath = 'src/Logger/logs/errors';
     const errorToLog: ILog = {
       type: 'error',
       message,
@@ -25,7 +25,7 @@ export class CustomLoggerService extends ConsoleLogger {
   }
 
   async uncaughError(statusCode: number) {
-    const filePath = 'src/Logger/logs/uncaught.log';
+    const filePath = 'src/Logger/logs/uncaught';
     const dataToLog: ILog = {
       type: 'uncaughError',
       statusCode,
@@ -36,7 +36,7 @@ export class CustomLoggerService extends ConsoleLogger {
   }
 
   async requestDebug(url: string, query: string, body: string) {
-    const filePath = 'src/Logger/logs/request.log';
+    const filePath = 'src/Logger/logs/request';
     const dataToLog: ILog = {
       type: 'requestDebug',
       url,
@@ -48,7 +48,7 @@ export class CustomLoggerService extends ConsoleLogger {
   }
 
   async responseDebug(statusCode: number) {
-    const filePath = 'src/Logger/logs/response.log';
+    const filePath = 'src/Logger/logs/response';
     const dataToLog: ILog = {
       type: 'responseDebug',
       statusCode,
