@@ -1,0 +1,49 @@
+version: '3'
+
+services:
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ulianasavi/test-app:latest
+    container_name: server
+    restart: always
+    command: npm run start
+    env_file: .env
+    environment:
+      - PORT=$PORT
+      - DOCKER_HOST=$POSTGRES_HOSTNAME
+    ports:
+      - $PORT:$PORT
+    volumes:
+      - ./:/src
+    networks:
+      - app-network
+    depends_on:
+      - postgres
+  postgres:
+      image: postgres:15.3
+      environment:
+        POSTGRES_DB: $DB_NAME
+        POSTGRES_USER: $POSTGRES_USERNAME
+        POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+      env_file: .env
+      ports:
+        - $POSTGRES_PORT:$POSTGRES_PORT
+      volumes:
+        - data:/var/lib/postgresql/data
+        - logs:/logs
+      restart: always
+      networks:
+      - app-network
+
+volumes:
+  data:
+      name: data
+  logs:
+    name: logs
+
+networks:
+  app-network:
+    name: app-network
+    driver: bridge

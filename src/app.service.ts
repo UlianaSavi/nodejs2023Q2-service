@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import { HTML_START_PAGE } from './constants';
 
 @Injectable()
 export class AppService {
-  getHello(): string {
-    return 'Hello World!';
+  init(): string {
+    return HTML_START_PAGE;
   }
 }
